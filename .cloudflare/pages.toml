@@ -1,0 +1,21 @@
+# Cloudflare Pages configuration
+
+[build]
+  command = "./cloudflare-build.sh"
+  publish = ".cloudflare-output"
+
+[build.environment]
+  NODE_VERSION = "20.0.0"
+  NPM_VERSION = "9.6.7"
+
+# Skip Sanity studio from pre-rendering
+[[redirects]]
+  from = "/studio/*"
+  to = "/studio/index.html"
+  status = 200
+
+# Custom 404 page
+[[redirects]]
+  from = "/*"
+  to = "/404"
+  status = 404
