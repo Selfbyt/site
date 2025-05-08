@@ -1,0 +1,9 @@
+# Cloudflare Pages configuration via wrangler.toml
+
+[build]
+command = "./cloudflare-build.sh"
+publish = ".cloudflare-output"
+
+[build.environment]
+NODE_VERSION = "20.0.0"
+NPM_VERSION = "9.6.7"
