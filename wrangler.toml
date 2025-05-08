@@ -1,10 +1,17 @@
 # Cloudflare Pages configuration via wrangler.toml
 
+# Required project name
+name = "selfbyt-site"
+
 # Build configuration
-build_command = "./cloudflare-build.sh"
-pages_build_output_dir = ".cloudflare-output"
+[build]
+command = "./cloudflare-build.sh"
+publish = ".cloudflare-output"
+
+# Configure Pages
+[site]
+bucket = "."
 
 # Environment variables
-[vars]
-NODE_VERSION = "20.0.0"
-NPM_VERSION = "9.6.7"
+[env.production]
+node_version = "20.0.0"
