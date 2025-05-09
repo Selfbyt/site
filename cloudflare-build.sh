@@ -37,22 +37,54 @@ echo "Using tailwind configuration file: $(ls *tailwind*config*)"
 echo "Installing tailwindcss globally for system access..."
 npm install -g tailwindcss
 
-# Create a separate installation of tailwindcss in a known location
+# Create a separate installation of tailwindcss in a known location with clear output
 echo "Creating dedicated tailwindcss installation..."
 mkdir -p ./tailwind-temp
 cd ./tailwind-temp
-npm init -y >/dev/null 2>&1
+echo "Initializing package.json in tailwind-temp directory"
+npm init -y
+echo "Installing tailwindcss in tailwind-temp directory"
 npm install tailwindcss postcss autoprefixer --no-save
 cd ..
-export PATH="$PATH:./tailwind-temp/node_modules/.bin:./node_modules/.bin"
+
+# Add multiple paths to ensure binaries are found
+export PATH="$PATH:$(pwd)/tailwind-temp/node_modules/.bin:$(pwd)/node_modules/.bin:/opt/buildhome/.npm-global/bin"
+echo "Updated PATH: $PATH"
 
 # Verify tailwindcss is accessible now
 echo "Verifying tailwindcss is on PATH:"
 which tailwindcss || echo "tailwindcss not found in PATH"
 
-# Build the app using our specialized Cloudflare build script
-echo "Starting specialized Cloudflare build..."
-npm run build:cloudflare
+# Instead of using npm run build:cloudflare, we'll execute the commands directly
+echo "Starting direct Cloudflare build..."
+
+# Process Tailwind CSS directly
+echo "Processing Tailwind CSS..."
+
+# Find the tailwindcss binary and use it directly
+TAILWIND_BIN="$(find . -name tailwindcss -type f -executable | head -n 1)"
+if [ -z "$TAILWIND_BIN" ]; then
+  # If executable not found, look for the node module
+  TAILWIND_BIN="$(find ./node_modules -path */tailwindcss/lib/cli.js | head -n 1)"
+  if [ -z "$TAILWIND_BIN" ]; then
+    echo "❌ Could not find tailwindcss - trying global install"
+    npm install -g tailwindcss
+    TAILWIND_BIN="tailwindcss"
+  else
+    echo "✅ Found Tailwind at $TAILWIND_BIN"
+    # This is a node script, not a binary
+    TAILWIND_BIN="node $TAILWIND_BIN"
+  fi
+else
+  echo "✅ Found Tailwind binary at $TAILWIND_BIN"
+fi
+
+# Process the CSS files
+eval "$TAILWIND_BIN -i ./styles/globals.css -o ./styles/output.css"
+
+# Then build Next.js
+echo "Building Next.js..."
+NODE_ENV=production next build
 
 # Only clean up if build was successful
 if [ $? -eq 0 ]; then
