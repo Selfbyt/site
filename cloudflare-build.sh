@@ -33,10 +33,26 @@ fi
 echo "Using tailwind configuration file: $(ls *tailwind*config*)"
 
 
-# Build the app
-echo "Starting Next.js build..."
-export PATH="$PATH:./node_modules/.bin"
-npm run build
+# Make sure tailwindcss is installed in the system path
+echo "Installing tailwindcss globally for system access..."
+npm install -g tailwindcss
+
+# Create a separate installation of tailwindcss in a known location
+echo "Creating dedicated tailwindcss installation..."
+mkdir -p ./tailwind-temp
+cd ./tailwind-temp
+npm init -y >/dev/null 2>&1
+npm install tailwindcss postcss autoprefixer --no-save
+cd ..
+export PATH="$PATH:./tailwind-temp/node_modules/.bin:./node_modules/.bin"
+
+# Verify tailwindcss is accessible now
+echo "Verifying tailwindcss is on PATH:"
+which tailwindcss || echo "tailwindcss not found in PATH"
+
+# Build the app using our specialized Cloudflare build script
+echo "Starting specialized Cloudflare build..."
+npm run build:cloudflare
 
 # Only clean up if build was successful
 if [ $? -eq 0 ]; then

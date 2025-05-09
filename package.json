@@ -8,6 +8,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build:cloudflare": "NODE_ENV=production npx tailwindcss -i ./styles/globals.css -o ./styles/output.css && next build",
     "start": "next start",
     "lint": "next lint"
   },
@@ -48,7 +49,6 @@
     "@sanity/types": "latest",
     "@sanity/ui": "latest",
     "@sanity/vision": "^3.88.2",
-    "autoprefixer": "^10.4.20",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "1.0.4",
@@ -79,7 +79,8 @@
     "@types/node": "^22",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "postcss": "^8",
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.3",
     "tailwindcss": "^3.4.17",
     "typescript": "^5"
   }
