@@ -1,21 +1,17 @@
-# Cloudflare Pages configuration
 name = "selfbyt"
 
-# Build configuration
-build_command = "./cloudflare-build.sh"
-pages_build_output_dir = ".next"
+[build]
+command = "./cloudflare-build.sh"
+publish = ".next"
 
-# Environment variables
 [vars]
 NODE_VERSION = "20.0.0"
 
-# For preview environment (development/staging)
 [env.preview]
 [env.preview.vars]
 NODE_ENV = "development"
 NODE_VERSION = "20.0.0"
 
-# For production environment
 [env.production]
 [env.production.vars]
 NODE_ENV = "production"
