@@ -1,8 +1,10 @@
 name = "selfbyt"
 
+# This is required for Cloudflare Pages to recognize the configuration
+pages_build_output_dir = ".next"
+
 [build]
 command = "./cloudflare-build.sh"
-publish = ".next"
 
 [vars]
 NODE_VERSION = "20.0.0"
