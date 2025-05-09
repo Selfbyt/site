@@ -20,16 +20,16 @@ const nextConfig = {
     
     return config;
   },
-  // This helps with reducing the size of the output
-  experimental: {
-    outputFileTracingExcludes: {
-      '*': [
-        'node_modules/@swc/core-linux-x64-gnu',
-        'node_modules/@swc/core-linux-x64-musl',
-        'node_modules/@esbuild/linux-x64',
-      ],
-    },
-  }
+  // This is now at the root level instead of experimental section as per Next.js 15+ recommendation
+  outputFileTracingExcludes: {
+    '*': [
+      'node_modules/@swc/core-linux-x64-gnu',
+      'node_modules/@swc/core-linux-x64-musl',
+      'node_modules/@esbuild/linux-x64',
+    ],
+  },
+  // Keep experimental section for other future options
+  experimental: {}
 }
 
 export default nextConfig
