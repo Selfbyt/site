@@ -1,12 +1,7 @@
 import type React from "react"
-import { Inter } from "next/font/google"
 
-import { ThemeProvider } from "@/components/theme-provider"
-import { SiteHeader } from "@/components/site-header"
-import { SiteFooter } from "@/components/site-footer"
-
-const inter = Inter({ subsets: ["latin"] })
-
+// The site layout no longer needs to include header and footer
+// as they are conditionally rendered in the root layout
 export default function SiteLayout({
   children,
 }: Readonly<{
@@ -14,9 +9,7 @@ export default function SiteLayout({
 }>) {
   return (
     <div className="relative flex min-h-screen flex-col">
-      <SiteHeader />
-      <main className="flex-1 w-full">{children}</main>
-      <SiteFooter />
+      {children}
     </div>
   )
 }
