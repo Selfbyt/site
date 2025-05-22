@@ -7,7 +7,7 @@
   },
   "scripts": {
     "dev": "next dev",
-    "build": "next build && find .next/cache -type f -size +20M -delete 2>/dev/null || true && rm -rf .next/cache/webpack/client-production/*.pack 2>/dev/null || true",
+    "build": "next build",
     "build:cloudflare": "NODE_ENV=production npx tailwindcss -i ./styles/globals.css -o ./styles/output.css && next build",
     "start": "next start",
     "lint": "next lint"
