@@ -52,7 +52,7 @@ export function SiteFooter() {
               <ul className="flex flex-col gap-2 text-sm text-muted-foreground">
                 <li className="flex items-center gap-2">
                   <Mail className="h-4 w-4" />
-                  <a href="mailto:selfbytdevelopmentlabs@gmail.com">selfbytdevelopmentlabs@gmail.com</a>
+                  <a href="mailto:hello@selfbyt.com">hello@selfbyt.com</a>
                 </li>
               </ul>
             </div>

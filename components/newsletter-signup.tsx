@@ -18,16 +18,39 @@ export function NewsletterSignup() {
     e.preventDefault()
     setIsLoading(true)
 
-    // This would typically connect to your newsletter service
-    // For now, we'll just simulate a successful subscription
-    setTimeout(() => {
-      toast({
-        title: "Subscription successful!",
-        description: "Thank you for subscribing to our newsletter.",
+    try {
+      const response = await fetch('/api/newsletter', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
       })
-      setEmail("")
+
+      const result = await response.json()
+
+      if (result.success) {
+        toast({
+          title: "Subscription successful!",
+          description: result.message,
+        })
+        setEmail("")
+      } else {
+        toast({
+          title: "Subscription failed",
+          description: result.message,
+          variant: "destructive",
+        })
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to subscribe. Please try again later.",
+        variant: "destructive",
+      })
+    } finally {
       setIsLoading(false)
-    }, 1000)
+    }
   }
 
   return (

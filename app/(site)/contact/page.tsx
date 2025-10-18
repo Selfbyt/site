@@ -31,21 +31,44 @@ export default function ContactPage() {
     e.preventDefault()
     setIsLoading(true)
 
-    // This would typically connect to your email service or API
-    // For now, we'll just simulate a successful submission
-    setTimeout(() => {
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      })
+
+      const result = await response.json()
+
+      if (result.success) {
+        toast({
+          title: "Message sent!",
+          description: result.message,
+        })
+        setFormData({
+          name: "",
+          email: "",
+          subject: "",
+          message: "",
+        })
+      } else {
+        toast({
+          title: "Error",
+          description: result.message,
+          variant: "destructive",
+        })
+      }
+    } catch (error) {
       toast({
-        title: "Message sent!",
-        description: "Thank you for contacting us. We'll get back to you soon.",
+        title: "Error",
+        description: "Failed to send message. Please try again later.",
+        variant: "destructive",
       })
-      setFormData({
-        name: "",
-        email: "",
-        subject: "",
-        message: "",
-      })
+    } finally {
       setIsLoading(false)
-    }, 1000)
+    }
   }
 
   return (
@@ -78,8 +101,8 @@ export default function ContactPage() {
               </p>
               <div className="flex items-center gap-2 pt-4">
                 <Mail className="h-5 w-5 text-[#1804FF]" />
-                <a href="mailto:selfbytdevelopmentlabs@gmail.com" className="text-[#1804FF] hover:underline">
-                  selfbytdevelopmentlabs@gmail.com
+                <a href="mailto:hello@selfbyt.com" className="text-[#1804FF] hover:underline">
+                  hello@selfbyt.com
                 </a>
               </div>
             </div>
