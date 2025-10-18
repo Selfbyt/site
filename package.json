@@ -8,6 +8,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "postbuild": "next-sitemap",
     "build:cloudflare": "NODE_ENV=production npx tailwindcss -i ./styles/globals.css -o ./styles/output.css && next build",
     "start": "next start",
     "lint": "next lint"
@@ -59,6 +60,7 @@
     "lucide-react": "^0.454.0",
     "next": "15.2.4",
     "next-sanity": "^9.11.0",
+    "next-sitemap": "^4.2.3",
     "next-themes": "^0.4.4",
     "node-fetch": "latest",
     "react": "^19",
