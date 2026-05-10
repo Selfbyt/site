@@ -1,98 +1,170 @@
+import type { Metadata } from "next"
 import Link from "next/link"
-import { Calendar, Tag } from "lucide-react"
+import { ArrowRight } from "lucide-react"
 import { notFound } from "next/navigation"
 
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { getBlogPosts } from "@/lib/sanity"
 
-export const revalidate = 3600 // Revalidate this page every hour
+export const metadata: Metadata = {
+  title: "Writing",
+  description:
+    "Method notes, post-mortems, and short pieces from the Selfbyt lab.",
+}
 
-export default async function BlogPage() {
-  const blogPosts = await getBlogPosts()
+// 24h. Sanity webhook (/api/revalidate) handles immediate updates.
+export const revalidate = 86400
 
-  if (!blogPosts) {
-    notFound()
-  }
+type Post = {
+  _id: string
+  title: string
+  slug: { current: string }
+  excerpt: string
+  category: string
+  publishedAt: string
+  author: string
+}
 
-  // Extract unique categories from blog posts
-  const categories = ["All", ...new Set(blogPosts.map((post: any) => post.category))]
+export default async function BlogPage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ category?: string }>
+}) {
+  const posts = (await getBlogPosts()) as Post[] | null
+  const sp = (await searchParams) || {}
+
+  if (!posts) notFound()
+
+  const categories = Array.from(
+    new Set(posts.map((p) => p.category).filter(Boolean)),
+  )
+  const active = sp.category && categories.includes(sp.category) ? sp.category : "All"
+
+  const filtered =
+    active === "All" ? posts : posts.filter((p) => p.category === active)
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <section className="w-full py-12 md:py-24 lg:py-32 bg-gradient-to-br from-[#2D1D5A] to-[#1804FF] text-white">
-        <div className="container px-4 md:px-6">
-          <div className="flex flex-col items-center justify-center space-y-4 text-center">
-            <div className="space-y-2">
-              <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl">Selfbyt Blog</h1>
-              <p className="max-w-[700px] text-gray-200 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                Insights, updates, and thoughts from our research team on neuroscience, AI, and human-computer
-                interaction.
+    <>
+      <section className="border-b" style={{ borderColor: "hsl(var(--rule))" }}>
+        <div className="container py-20 md:py-28">
+          <div className="grid gap-10 md:grid-cols-12">
+            <div className="md:col-span-2">
+              <p className="label-mono">Writing</p>
+            </div>
+            <div className="md:col-span-10 lg:col-span-9">
+              <h1 className="max-w-3xl text-balance text-3xl font-semibold leading-[1.1] tracking-tight sm:text-4xl md:text-5xl">
+                Notes, post-mortems, and shorter pieces.
+              </h1>
+              <p className="mt-8 max-w-2xl text-pretty text-base leading-relaxed text-muted-foreground md:text-lg">
+                Less formal than papers, more concrete than blog posts usually
+                get. Mostly about what we tried, what worked, and what didn't.
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="w-full py-12 md:py-24 lg:py-32">
-        <div className="container px-4 md:px-6">
-          <Tabs defaultValue="All" className="w-full">
-            <div className="flex justify-center mb-8">
-              <TabsList>
-                {categories.map((category) => (
-                  <TabsTrigger key={category} value={category}>
-                    {category}
-                  </TabsTrigger>
-                ))}
-              </TabsList>
+      <section>
+        <div className="container py-12 md:py-16">
+          <div className="grid gap-10 md:grid-cols-12">
+            <div className="md:col-span-2">
+              <p className="label-mono">All posts</p>
             </div>
+            <div className="md:col-span-10 lg:col-span-9">
+              {categories.length > 0 && (
+                <nav
+                  aria-label="Filter by category"
+                  className="flex flex-wrap items-center gap-x-5 gap-y-2 border-b pb-5 font-mono text-[11px] uppercase tracking-wider"
+                  style={{ borderColor: "hsl(var(--rule))" }}
+                >
+                  <FilterLink label="All" active={active === "All"} href="/blog" />
+                  {categories.map((c) => (
+                    <FilterLink
+                      key={c}
+                      label={c}
+                      active={active === c}
+                      href={`/blog?category=${encodeURIComponent(c)}`}
+                    />
+                  ))}
+                </nav>
+              )}
 
-            {categories.map((category) => (
-              <TabsContent key={category} value={category} className="w-full">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {blogPosts
-                    .filter((post: any) => category === "All" || post.category === category)
-                    .map((post: any) => {
-                      // Format the date
-                      const formattedDate = new Date(post.publishedAt).toLocaleDateString("en-US", {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      })
-
-                      return (
-                        <Card key={post._id} className="flex flex-col">
-                          <CardHeader>
-                            <div className="flex items-center gap-2">
-                              <Tag className="h-4 w-4 text-[#1804FF]" />
-                              <span className="text-sm text-[#1804FF]">{post.category}</span>
-                            </div>
-                            <CardTitle className="mt-2">{post.title}</CardTitle>
-                            <CardDescription className="flex items-center gap-1 text-sm">
-                              <Calendar className="h-3 w-3" />
-                              {formattedDate} • {post.author}
-                            </CardDescription>
-                          </CardHeader>
-                          <CardContent className="flex-1">
-                            <p className="text-gray-500">{post.excerpt}</p>
-                          </CardContent>
-                          <CardFooter>
-                            <Link href={`/blog/${post.slug.current}`} passHref>
-                              <Button variant="outline" className="w-full">
-                                Read Post
-                              </Button>
-                            </Link>
-                          </CardFooter>
-                        </Card>
-                      )
-                    })}
-                </div>
-              </TabsContent>
-            ))}
-          </Tabs>
+              {filtered.length === 0 ? (
+                <p className="mt-12 text-sm text-muted-foreground">
+                  No posts in this category yet.
+                </p>
+              ) : (
+                <ul>
+                  {filtered.map((post) => {
+                    const formattedDate = new Date(post.publishedAt).toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })
+                    return (
+                      <li
+                        key={post._id}
+                        className="border-b py-8 first:pt-10"
+                        style={{ borderColor: "hsl(var(--rule))" }}
+                      >
+                        <Link
+                          href={`/blog/${post.slug.current}`}
+                          className="group block"
+                        >
+                          <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
+                            <p className="font-mono text-[11px] uppercase tracking-wider text-muted-foreground">
+                              {post.category}
+                            </p>
+                            <time className="font-mono text-[11px] uppercase tracking-wider text-muted-foreground/70">
+                              {formattedDate}
+                              {post.author ? ` · ${post.author}` : ""}
+                            </time>
+                          </div>
+                          <h2 className="mt-3 max-w-3xl text-lg font-semibold leading-snug tracking-tight transition-colors group-hover:text-muted-foreground md:text-xl">
+                            {post.title}
+                          </h2>
+                          <p className="mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground md:text-[15px]">
+                            {post.excerpt}
+                          </p>
+                          <span className="mt-4 inline-flex items-center gap-1.5 text-sm text-foreground">
+                            <span className="border-b border-foreground/40 pb-0.5 transition-colors group-hover:border-foreground">
+                              Read post
+                            </span>
+                            <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+                          </span>
+                        </Link>
+                      </li>
+                    )
+                  })}
+                </ul>
+              )}
+            </div>
+          </div>
         </div>
       </section>
-    </div>
+    </>
+  )
+}
+
+function FilterLink({
+  label,
+  active,
+  href,
+}: {
+  label: string
+  active: boolean
+  href: string
+}) {
+  return (
+    <Link
+      href={href}
+      className={
+        active
+          ? "text-foreground"
+          : "text-muted-foreground hover:text-foreground"
+      }
+      aria-current={active ? "page" : undefined}
+    >
+      {label}
+    </Link>
   )
 }

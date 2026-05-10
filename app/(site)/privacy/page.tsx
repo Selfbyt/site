@@ -1,184 +1,112 @@
-import { Shield, Eye, Lock, Mail } from "lucide-react"
+import type { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "Privacy",
+  description: "How Selfbyt handles personal information.",
+}
+
+const LAST_UPDATED = "May 10, 2026"
 
 export default function PrivacyPage() {
   return (
-    <div className="flex flex-col min-h-screen">
-      <section className="w-full py-12 md:py-24 lg:py-32 bg-gradient-to-br from-[#2D1D5A] to-[#1804FF] text-white">
-        <div className="container px-4 md:px-6">
-          <div className="flex flex-col items-center justify-center space-y-4 text-center">
-            <div className="space-y-2">
-              <div className="inline-block rounded-lg bg-white/10 p-3">
-                <Shield className="h-8 w-8 text-white" />
-              </div>
-              <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl">Privacy Policy</h1>
-              <p className="max-w-[700px] text-gray-200 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                How we collect, use, and protect your information at Selfbyt
+    <>
+      <section className="border-b" style={{ borderColor: "hsl(var(--rule))" }}>
+        <div className="container py-20 md:py-24">
+          <div className="grid gap-10 md:grid-cols-12">
+            <div className="md:col-span-2">
+              <p className="label-mono">Privacy</p>
+            </div>
+            <div className="md:col-span-10 lg:col-span-9">
+              <h1 className="max-w-3xl text-balance text-3xl font-semibold leading-[1.1] tracking-tight sm:text-4xl md:text-[2.75rem]">
+                Privacy policy
+              </h1>
+              <p className="mt-6 font-mono text-xs uppercase tracking-wider text-muted-foreground">
+                Last updated · {LAST_UPDATED}
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="w-full py-12 md:py-24 lg:py-32">
-        <div className="container px-4 md:px-6 max-w-4xl">
-          <div className="prose prose-gray max-w-none dark:prose-invert">
-            <div className="space-y-8">
-              <div>
-                <p className="text-gray-600">
-                  <strong>Last updated:</strong> {new Date().toLocaleDateString()}
+      <section>
+        <div className="container py-16 md:py-20">
+          <div className="grid gap-10 md:grid-cols-12">
+            <div className="md:col-span-2 hidden md:block">
+              <p className="label-mono">Policy</p>
+            </div>
+            <div className="md:col-span-10 lg:col-span-9">
+              <div className="prose-selfbyt max-w-3xl">
+                <p>
+                  This page explains what Selfbyt collects when you visit this
+                  site, why, and what you can do about it. We try to keep it
+                  short.
                 </p>
-                <p className="text-gray-600">
-                  At Selfbyt, we are committed to protecting your privacy and ensuring the security of your personal information. 
-                  This Privacy Policy explains how we collect, use, and safeguard your data when you visit our website or interact with our services.
-                </p>
-              </div>
 
-              <div>
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                  <Eye className="h-6 w-6 text-[#1804FF]" />
-                  Information We Collect
-                </h2>
-                <div className="space-y-4">
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Contact Information</h3>
-                    <p className="text-gray-600">
-                      When you use our contact form or newsletter signup, we collect:
-                    </p>
-                    <ul className="list-disc list-inside text-gray-600 space-y-1">
-                      <li>Name</li>
-                      <li>Email address</li>
-                      <li>Subject and message content (contact form only)</li>
-                    </ul>
-                  </div>
-                  
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Website Usage Data</h3>
-                    <p className="text-gray-600">
-                      We may collect anonymous information about how you use our website, including:
-                    </p>
-                    <ul className="list-disc list-inside text-gray-600 space-y-1">
-                      <li>Pages visited</li>
-                      <li>Time spent on pages</li>
-                      <li>Browser type and version</li>
-                      <li>IP address (anonymized)</li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                  <Mail className="h-6 w-6 text-[#1804FF]" />
-                  How We Use Your Information
-                </h2>
-                <p className="text-gray-600">
-                  We use the information we collect to:
+                <h2>What we collect</h2>
+                <p>
+                  Two things, both opt-in. If you submit the contact form, we
+                  receive your name, email, subject line, and message. If you
+                  subscribe to the newsletter, we receive your email address.
+                  Nothing else.
                 </p>
-                <ul className="list-disc list-inside text-gray-600 space-y-1">
-                  <li>Respond to your inquiries and messages</li>
-                  <li>Send you updates about our research and publications (if you subscribe)</li>
-                  <li>Improve our website and services</li>
-                  <li>Analyze website usage patterns</li>
-                  <li>Comply with legal obligations</li>
+                <p>
+                  Like most websites, our hosting provider records standard
+                  request logs — IP address, user-agent, request path, and
+                  timestamps — to keep the site running and detect abuse. We
+                  do not run analytics or third-party trackers on this site.
+                </p>
+
+                <h2>Why we collect it</h2>
+                <ul>
+                  <li>To reply to your message, if you contacted us.</li>
+                  <li>To send the newsletter, if you subscribed.</li>
+                  <li>To keep the site working and secure.</li>
                 </ul>
-              </div>
 
-              <div>
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-                  <Lock className="h-6 w-6 text-[#1804FF]" />
-                  Data Security
-                </h2>
-                <p className="text-gray-600">
-                  We implement appropriate security measures to protect your personal information against unauthorized access, 
-                  alteration, disclosure, or destruction. This includes:
-                </p>
-                <ul className="list-disc list-inside text-gray-600 space-y-1">
-                  <li>Encrypted data transmission (HTTPS)</li>
-                  <li>Secure email handling</li>
-                  <li>Regular security updates</li>
-                  <li>Limited access to personal data</li>
-                </ul>
-              </div>
-
-              <div>
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Information Sharing</h2>
-                <p className="text-gray-600">
-                  We do not sell, trade, or otherwise transfer your personal information to third parties without your consent, 
-                  except in the following circumstances:
-                </p>
-                <ul className="list-disc list-inside text-gray-600 space-y-1">
-                  <li>When required by law</li>
-                  <li>To protect our rights and safety</li>
-                  <li>With trusted service providers who assist in website operations (under strict confidentiality agreements)</li>
-                </ul>
-              </div>
-
-              <div>
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Cookies and Tracking</h2>
-                <p className="text-gray-600">
-                  Our website may use cookies and similar technologies to enhance your browsing experience and analyze website traffic. 
-                  You can control cookie settings through your browser preferences.
-                </p>
-              </div>
-
-              <div>
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Your Rights</h2>
-                <p className="text-gray-600">
-                  You have the right to:
-                </p>
-                <ul className="list-disc list-inside text-gray-600 space-y-1">
-                  <li>Access your personal information</li>
-                  <li>Correct inaccurate data</li>
-                  <li>Request deletion of your data</li>
-                  <li>Opt-out of communications</li>
-                  <li>Data portability</li>
-                </ul>
-                <p className="text-gray-600 mt-4">
-                  To exercise these rights, please contact us at{" "}
-                  <a href="mailto:hello@selfbyt.com" className="text-[#1804FF] hover:underline">
-                    hello@selfbyt.com
+                <h2>Where it goes</h2>
+                <p>
+                  Contact form submissions are sent over email to our internal
+                  address. Newsletter subscriptions are stored with{" "}
+                  <a href="https://mailchimp.com" rel="noreferrer noopener" target="_blank">
+                    Mailchimp
                   </a>
+                  , which acts as our processor. Hosting logs sit with our
+                  hosting provider for a short retention window.
                 </p>
-              </div>
 
-              <div>
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Research Data</h2>
-                <p className="text-gray-600">
-                  As a research organization, we may collect and analyze anonymized data for research purposes. 
-                  This data is used to advance our understanding of cognitive computing and human-computer interaction. 
-                  All research data is anonymized and cannot be traced back to individual users.
+                <h2>Your rights</h2>
+                <p>
+                  You can ask us to access, correct, or delete the personal
+                  data we hold about you. You can unsubscribe from the
+                  newsletter at any time using the link in any email, or by
+                  emailing us. To exercise any other right, write to{" "}
+                  <a href="mailto:hello@selfbyt.com">hello@selfbyt.com</a>.
                 </p>
-              </div>
 
-              <div>
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Changes to This Policy</h2>
-                <p className="text-gray-600">
-                  We may update this Privacy Policy from time to time. We will notify you of any changes by posting the new 
-                  Privacy Policy on this page and updating the "Last updated" date.
+                <h2>Cookies</h2>
+                <p>
+                  This site sets a single cookie to remember your light/dark
+                  theme preference. It is not used for tracking, advertising,
+                  or analytics.
                 </p>
-              </div>
 
-              <div>
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Contact Us</h2>
-                <p className="text-gray-600">
-                  If you have any questions about this Privacy Policy or our data practices, please contact us at:
+                <h2>Changes</h2>
+                <p>
+                  If we change this policy in any meaningful way, we'll update
+                  the date at the top and, where appropriate, mention it in
+                  the newsletter.
                 </p>
-                <div className="mt-4 p-4 bg-gray-50 rounded-lg">
-                  <p className="text-gray-600">
-                    <strong>Email:</strong>{" "}
-                    <a href="mailto:hello@selfbyt.com" className="text-[#1804FF] hover:underline">
-                      hello@selfbyt.com
-                    </a>
-                  </p>
-                  <p className="text-gray-600">
-                    <strong>Organization:</strong> Selfbyt Research Labs
-                  </p>
-                </div>
+
+                <h2>Contact</h2>
+                <p>
+                  Questions about this policy go to{" "}
+                  <a href="mailto:hello@selfbyt.com">hello@selfbyt.com</a>.
+                </p>
               </div>
             </div>
           </div>
         </div>
       </section>
-    </div>
+    </>
   )
 }

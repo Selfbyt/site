@@ -1,64 +1,77 @@
 import Link from "next/link"
 import { ArrowRight } from "lucide-react"
 
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { getResearchPapers } from "@/lib/sanity"
+import { getRecentResearchPapers } from "@/lib/sanity"
 
 export async function FeaturedResearch() {
-  // Fetch the latest 3 research papers
-  const allPapers = await getResearchPapers()
-  const featuredResearch = allPapers.slice(0, 3)
+  const featuredResearch = await getRecentResearchPapers(3)
 
   return (
-    <section className="w-full py-12 md:py-24 lg:py-32">
-      <div className="container px-4 md:px-6">
-        <div className="flex flex-col items-center justify-center space-y-4 text-center">
-          <div className="space-y-2">
-            <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">Featured Research</h2>
-            <p className="max-w-[900px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-              Explore our latest research papers and findings
-            </p>
+    <section className="border-b" style={{ borderColor: "hsl(var(--rule))" }}>
+      <div className="container py-20 md:py-24">
+        <div className="grid gap-10 md:grid-cols-12">
+          <div className="md:col-span-2">
+            <p className="label-mono">03 / Research</p>
           </div>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
-          {featuredResearch.map((paper: any) => {
-            // Format the date
-            const formattedDate = new Date(paper.publishedAt).toLocaleDateString("en-US", {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            })
+          <div className="md:col-span-10 lg:col-span-9">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+              <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
+                Recent papers
+              </h2>
+              <Link
+                href="/research"
+                className="text-sm text-muted-foreground hover:text-foreground"
+              >
+                All research →
+              </Link>
+            </div>
 
-            return (
-              <Card key={paper._id} className="flex flex-col">
-                <CardHeader>
-                  <div className="text-sm text-[#1804FF] font-medium">{paper.category}</div>
-                  <CardTitle className="mt-2">{paper.title}</CardTitle>
-                  <CardDescription className="text-sm text-gray-500">{formattedDate}</CardDescription>
-                </CardHeader>
-                <CardContent className="flex-1">
-                  <p className="text-gray-500">{paper.abstract}</p>
-                </CardContent>
-                <CardFooter>
-                  <Link href={`/research/${paper.slug.current}`} passHref>
-                    <Button variant="outline" className="w-full">
-                      Read Paper
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </Button>
-                  </Link>
-                </CardFooter>
-              </Card>
-            )
-          })}
-        </div>
-        <div className="flex justify-center mt-8">
-          <Link href="/research" passHref>
-            <Button variant="outline">
-              View All Research
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-          </Link>
+            {featuredResearch?.length ? (
+              <ul className="mt-12 divide-y" style={{ borderColor: "hsl(var(--rule))" }}>
+                {featuredResearch.map((paper: any) => {
+                  const formattedDate = new Date(paper.publishedAt).toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })
+
+                  return (
+                    <li key={paper._id} className="border-t py-8 first:border-t-0 first:pt-0" style={{ borderColor: "hsl(var(--rule))" }}>
+                      <Link
+                        href={`/research/${paper.slug.current}`}
+                        className="group block"
+                      >
+                        <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
+                          <p className="font-mono text-[11px] uppercase tracking-wider text-muted-foreground">
+                            {paper.category}
+                          </p>
+                          <time className="font-mono text-[11px] uppercase tracking-wider text-muted-foreground/70">
+                            {formattedDate}
+                          </time>
+                        </div>
+                        <h3 className="mt-3 text-lg font-semibold leading-snug tracking-tight transition-colors group-hover:text-muted-foreground md:text-xl">
+                          {paper.title}
+                        </h3>
+                        <p className="mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground md:text-[15px]">
+                          {paper.abstract}
+                        </p>
+                        <span className="mt-4 inline-flex items-center gap-1.5 text-sm text-foreground">
+                          <span className="border-b border-foreground/40 pb-0.5 transition-colors group-hover:border-foreground">
+                            Read paper
+                          </span>
+                          <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+                        </span>
+                      </Link>
+                    </li>
+                  )
+                })}
+              </ul>
+            ) : (
+              <p className="mt-12 text-sm text-muted-foreground">
+                Nothing published yet. Check back soon.
+              </p>
+            )}
+          </div>
         </div>
       </div>
     </section>

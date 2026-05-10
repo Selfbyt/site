@@ -1,23 +1,23 @@
 import Link from "next/link"
-import { ArrowLeft, Calendar, User } from "lucide-react"
+import { ArrowLeft } from "lucide-react"
 import { notFound } from "next/navigation"
 
-import { Button } from "@/components/ui/button"
 import { getBlogPostBySlug } from "@/lib/sanity"
 import { PortableText } from "@/components/portable-text"
 
-export const revalidate = 3600 // Revalidate this page every hour
+// 24h. Sanity webhook (/api/revalidate) handles immediate updates.
+export const revalidate = 86400
 
-export default async function BlogPostPage({ params }: { params: { slug: string } }) {
-  // Await the params object before using its properties to comply with Next.js 15
-  const validParams = await Promise.resolve(params)
-  const post = await getBlogPostBySlug(validParams.slug)
+export default async function BlogPostPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>
+}) {
+  const { slug } = await params
+  const post = await getBlogPostBySlug(slug)
 
-  if (!post) {
-    notFound()
-  }
+  if (!post) notFound()
 
-  // Format the date
   const formattedDate = new Date(post.publishedAt).toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
@@ -25,32 +25,50 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
   })
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <article className="container max-w-3xl px-4 py-12 md:py-20">
-        <Link href="/blog" passHref>
-          <Button variant="ghost" className="mb-8 pl-0 text-muted-foreground">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Blog
-          </Button>
-        </Link>
-
-        <h1 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">{post.title}</h1>
-
-        <div className="flex items-center gap-4 mt-4 text-muted-foreground">
-          <div className="flex items-center gap-1">
-            <Calendar className="h-4 w-4" />
-            <span>{formattedDate}</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <User className="h-4 w-4" />
-            <span>{post.author}</span>
+    <article>
+      <header className="border-b" style={{ borderColor: "hsl(var(--rule))" }}>
+        <div className="container py-12 md:py-16">
+          <div className="grid gap-10 md:grid-cols-12">
+            <div className="md:col-span-2">
+              <Link
+                href="/blog"
+                className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-wider text-muted-foreground hover:text-foreground"
+              >
+                <ArrowLeft className="h-3 w-3" />
+                Back
+              </Link>
+            </div>
+            <div className="md:col-span-10 lg:col-span-9">
+              <p className="font-mono text-[11px] uppercase tracking-wider text-muted-foreground">
+                {post.category ? `${post.category} · ` : ""}
+                {formattedDate}
+                {post.author ? ` · ${post.author}` : ""}
+              </p>
+              <h1 className="mt-4 max-w-4xl text-balance text-3xl font-semibold leading-[1.1] tracking-tight sm:text-4xl md:text-[2.75rem]">
+                {post.title}
+              </h1>
+              {post.excerpt ? (
+                <p className="mt-6 max-w-2xl text-pretty text-base leading-relaxed text-muted-foreground md:text-lg">
+                  {post.excerpt}
+                </p>
+              ) : null}
+            </div>
           </div>
         </div>
+      </header>
 
-        <div className="mt-8 prose prose-gray max-w-none dark:prose-invert prose-headings:font-bold prose-headings:tracking-tight">
-          <PortableText content={post.body} />
+      <div className="container py-12 md:py-16">
+        <div className="grid gap-10 md:grid-cols-12">
+          <div className="md:col-span-2 hidden md:block">
+            <p className="label-mono">Post</p>
+          </div>
+          <div className="md:col-span-10 lg:col-span-9">
+            <div className="prose-selfbyt max-w-3xl">
+              <PortableText content={post.body} />
+            </div>
+          </div>
         </div>
-      </article>
-    </div>
+      </div>
+    </article>
   )
 }

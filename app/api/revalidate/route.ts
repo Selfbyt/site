@@ -26,12 +26,8 @@ export async function POST(request: NextRequest) {
       revalidatePath("/research")
       revalidatePath(`/research/${slug.current}`)
       revalidatePath("/")
-    } else if (_type === "caseStudy") {
-      revalidatePath("/case-studies")
-      revalidatePath(`/case-studies/${slug.current}`)
-    } else if (_type === "product") {
-      revalidatePath("/products")
-      revalidatePath(`/products/${slug.current}`)
+    } else if (_type === "caseStudy" || _type === "product") {
+      // Legacy Sanity types: public pages removed; still refresh the homepage if referenced.
       revalidatePath("/")
     } else {
       // Fallback to revalidating the homepage

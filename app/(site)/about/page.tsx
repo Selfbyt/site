@@ -1,146 +1,166 @@
-import { Brain, Cpu, Database, Layers, Microscope } from "lucide-react"
+import type { Metadata } from "next"
+import Link from "next/link"
+
+export const metadata: Metadata = {
+  title: "About",
+  description:
+    "Selfbyt is a small research lab working on computing systems and machine learning.",
+}
+
+const PRINCIPLES = [
+  {
+    no: "i.",
+    title: "Measurements over manifestos",
+    body: "Concrete numbers, reproducible setups, and code people can actually run. Claims that aren't measurable get cut.",
+  },
+  {
+    no: "ii.",
+    title: "Systems and learning together",
+    body: "We work where the algorithms meet the hardware. Inference paths, memory layout, and model structure are studied as one thing, not three.",
+  },
+  {
+    no: "iii.",
+    title: "Open notes, when we can",
+    body: "We share method notes, scripts, and partial results — not just polished papers. Some work stays internal while it's still rough.",
+  },
+  {
+    no: "iv.",
+    title: "Small on purpose",
+    body: "We stay small so we can focus. Fewer people, fewer meetings, more time on the actual problem.",
+  },
+]
+
+const WORK = [
+  {
+    label: "Research",
+    body: "Papers, technical reports, and reproducible experiments on inference, sparsity, and evaluation.",
+    href: "/research",
+    cta: "Read research",
+  },
+  {
+    label: "Writing",
+    body: "Method notes, post-mortems, and shorter pieces about what we're working on right now.",
+    href: "/blog",
+    cta: "Browse writing",
+  },
+  {
+    label: "Software",
+    body: "Internal tools we use day to day. Some get released; some stay in-house while we harden them.",
+    href: "/contact",
+    cta: "Ask about access",
+  },
+]
 
 export default function AboutPage() {
   return (
-    <div className="flex flex-col min-h-screen">
-      <section className="w-full py-12 md:py-24 lg:py-32 bg-gradient-to-br from-[#2D1D5A] to-[#1804FF] text-white">
-        <div className="container px-4 md:px-6">
-          <div className="flex flex-col items-center justify-center space-y-4 text-center">
-            <div className="space-y-2">
-              <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl">About Selfbyt</h1>
-              <p className="max-w-[700px] text-gray-200 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                A research-driven organization dedicated to advancing the intersection of neuroscience, artificial
-                intelligence, and human-computer interaction.
+    <>
+      <section className="border-b" style={{ borderColor: "hsl(var(--rule))" }}>
+        <div className="container py-20 md:py-28">
+          <div className="grid gap-10 md:grid-cols-12">
+            <div className="md:col-span-2">
+              <p className="label-mono">About</p>
+            </div>
+            <div className="md:col-span-10 lg:col-span-9">
+              <h1 className="max-w-3xl text-balance text-3xl font-semibold leading-[1.1] tracking-tight sm:text-4xl md:text-5xl">
+                Selfbyt is a small research group working on computing systems
+                and machine learning.
+              </h1>
+              <p className="mt-8 max-w-2xl text-pretty text-base leading-relaxed text-muted-foreground md:text-lg">
+                We publish papers and notes, share code where we can, and build
+                a few internal tools that we use ourselves. The site is the
+                archive of that work.
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="w-full py-12 md:py-24 lg:py-32">
-        <div className="container px-4 md:px-6">
-          <div className="grid gap-6 lg:grid-cols-2 lg:gap-12">
-            <div className="space-y-4">
-              <div className="inline-block rounded-lg bg-gray-100 p-2">
-                <Brain className="h-6 w-6 text-[#1804FF]" />
-              </div>
-              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">Who We Are</h2>
-              <p className="text-gray-500 md:text-xl/relaxed">
-                Selfbyt is a research-driven organization dedicated to advancing the intersection of neuroscience,
-                artificial intelligence, and human-computer interaction. We build software systems that emulate human
-                cognitive capabilities, aiming to revolutionize how computers understand, learn, and interact with
-                humans.
-              </p>
+      <section className="border-b" style={{ borderColor: "hsl(var(--rule))" }}>
+        <div className="container py-20 md:py-24">
+          <div className="grid gap-10 md:grid-cols-12">
+            <div className="md:col-span-2">
+              <p className="label-mono">How we work</p>
             </div>
-            <div className="space-y-4">
-              <div className="inline-block rounded-lg bg-gray-100 p-2">
-                <Microscope className="h-6 w-6 text-[#1804FF]" />
-              </div>
-              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">Research Philosophy</h2>
-              <p className="text-gray-500 md:text-xl/relaxed">
-                Our approach combines rigorous scientific methodology with practical applications. We believe in
-                innovating at the hardware and software interface, rethinking fundamental computing paradigms, creating
-                more efficient and human-like data processing systems, responsible AI development with a focus on safety
-                and ethics, and bridging theoretical research with practical applications.
-              </p>
+            <div className="md:col-span-10 lg:col-span-9">
+              <ul className="grid gap-x-12 gap-y-12 md:grid-cols-2">
+                {PRINCIPLES.map((p) => (
+                  <li key={p.title} className="border-t pt-5" style={{ borderColor: "hsl(var(--rule))" }}>
+                    <p className="font-mono text-xs text-muted-foreground">{p.no}</p>
+                    <h3 className="mt-2 text-base font-semibold tracking-tight">
+                      {p.title}
+                    </h3>
+                    <p className="mt-3 max-w-md text-sm leading-relaxed text-muted-foreground">
+                      {p.body}
+                    </p>
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="w-full py-12 md:py-24 lg:py-32 bg-gray-50">
-        <div className="container px-4 md:px-6">
-          <div className="flex flex-col items-center justify-center space-y-4 text-center">
-            <div className="space-y-2">
-              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">Our Focus Areas</h2>
-              <p className="max-w-[900px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                Selfbyt works at the intersection of multiple disciplines to revolutionize computing
-              </p>
+      <section className="border-b" style={{ borderColor: "hsl(var(--rule))" }}>
+        <div className="container py-20 md:py-24">
+          <div className="grid gap-10 md:grid-cols-12">
+            <div className="md:col-span-2">
+              <p className="label-mono">What we do</p>
             </div>
-          </div>
-          <div className="mx-auto grid max-w-5xl grid-cols-1 gap-6 py-12 md:grid-cols-2 lg:grid-cols-3">
-            <div className="flex flex-col items-center space-y-2 rounded-lg border p-6 shadow-sm">
-              <Brain className="h-12 w-12 text-[#1804FF]" />
-              <h3 className="text-xl font-bold">Neuroscience</h3>
-              <p className="text-center text-gray-500">
-                Studying brain functions and neural networks to develop computational models that mirror human cognitive
-                processes.
-              </p>
-            </div>
-            <div className="flex flex-col items-center space-y-2 rounded-lg border p-6 shadow-sm">
-              <Layers className="h-12 w-12 text-[#1804FF]" />
-              <h3 className="text-xl font-bold">Human-Computer Interaction</h3>
-              <p className="text-center text-gray-500">
-                Creating intuitive interfaces and interaction patterns that bridge the gap between human cognition and
-                computer systems.
-              </p>
-            </div>
-            <div className="flex flex-col items-center space-y-2 rounded-lg border p-6 shadow-sm">
-              <Cpu className="h-12 w-12 text-[#1804FF]" />
-              <h3 className="text-xl font-bold">Cognitive Computing</h3>
-              <p className="text-center text-gray-500">
-                Developing intelligent systems that can reason, learn, and process information in ways similar to the
-                human brain.
-              </p>
-            </div>
-            <div className="flex flex-col items-center space-y-2 rounded-lg border p-6 shadow-sm">
-              <Database className="h-12 w-12 text-[#1804FF]" />
-              <h3 className="text-xl font-bold">Fundamental Data Architecture</h3>
-              <p className="text-center text-gray-500">
-                Revolutionizing how computers handle and process data at the lowest level with universal data type
-                systems and optimized storage.
-              </p>
-            </div>
-            <div className="flex flex-col items-center space-y-2 rounded-lg border p-6 shadow-sm">
-              <Microscope className="h-12 w-12 text-[#1804FF]" />
-              <h3 className="text-xl font-bold">Applied AI Research</h3>
-              <p className="text-center text-gray-500">
-                Conducting research in artificial intelligence with a focus on cognitive modeling and neural
-                architectures.
-              </p>
+            <div className="md:col-span-10 lg:col-span-9">
+              <ul className="divide-y" style={{ borderColor: "hsl(var(--rule))" }}>
+                {WORK.map((item) => (
+                  <li
+                    key={item.label}
+                    className="grid grid-cols-12 gap-6 border-t py-8 first:border-t-0 first:pt-0"
+                    style={{ borderColor: "hsl(var(--rule))" }}
+                  >
+                    <p className="col-span-12 font-mono text-xs uppercase tracking-wider text-muted-foreground sm:col-span-3">
+                      {item.label}
+                    </p>
+                    <div className="col-span-12 sm:col-span-9">
+                      <p className="max-w-2xl text-base leading-relaxed text-foreground/90 md:text-[17px]">
+                        {item.body}
+                      </p>
+                      <Link
+                        href={item.href}
+                        className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium"
+                      >
+                        <span className="border-b border-foreground/40 pb-0.5 transition-colors hover:border-foreground">
+                          {item.cta}
+                        </span>
+                        <span aria-hidden>→</span>
+                      </Link>
+                    </div>
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="w-full py-12 md:py-24 lg:py-32">
-        <div className="container px-4 md:px-6">
-          <div className="flex flex-col items-center justify-center space-y-4 text-center">
-            <div className="space-y-2">
-              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">Technical Innovation</h2>
-              <p className="max-w-[900px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                We work at multiple levels of the computing stack
-              </p>
+      <section>
+        <div className="container py-20 md:py-24">
+          <div className="grid gap-10 md:grid-cols-12">
+            <div className="md:col-span-2">
+              <p className="label-mono">Get in touch</p>
             </div>
-          </div>
-          <div className="mx-auto grid max-w-5xl grid-cols-1 gap-6 py-12 md:grid-cols-2">
-            <div className="rounded-lg border p-6 shadow-sm">
-              <h3 className="text-xl font-bold">Hardware Optimization</h3>
-              <p className="mt-2 text-gray-500">
-                Developing specialized hardware architectures optimized for cognitive computing workloads.
-              </p>
-            </div>
-            <div className="rounded-lg border p-6 shadow-sm">
-              <h3 className="text-xl font-bold">Novel Data Types</h3>
-              <p className="mt-2 text-gray-500">
-                Creating new data type implementations that better represent complex information structures.
-              </p>
-            </div>
-            <div className="rounded-lg border p-6 shadow-sm">
-              <h3 className="text-xl font-bold">Memory Architecture</h3>
-              <p className="mt-2 text-gray-500">
-                Reimagining memory management and storage architectures for cognitive computing systems.
-              </p>
-            </div>
-            <div className="rounded-lg border p-6 shadow-sm">
-              <h3 className="text-xl font-bold">System Optimization</h3>
-              <p className="mt-2 text-gray-500">
-                Developing low-level system optimizations to enhance performance and efficiency.
+            <div className="md:col-span-10 lg:col-span-9">
+              <p className="max-w-2xl text-base leading-relaxed text-foreground/90 md:text-lg">
+                We're open to research collaboration, careful conversation about
+                a paper, or questions about our software.{" "}
+                <a
+                  href="mailto:hello@selfbyt.com"
+                  className="underline underline-offset-4 decoration-foreground/30 hover:decoration-foreground"
+                >
+                  hello@selfbyt.com
+                </a>{" "}
+                is the fastest path.
               </p>
             </div>
           </div>
         </div>
       </section>
-    </div>
+    </>
   )
 }

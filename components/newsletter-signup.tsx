@@ -3,13 +3,16 @@
 import type React from "react"
 
 import { useState } from "react"
-import { Send } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useToast } from "@/hooks/use-toast"
 
-export function NewsletterSignup() {
+export function NewsletterSignup({
+  sectionLabel = "Subscribe",
+}: {
+  sectionLabel?: string
+} = {}) {
   const [email, setEmail] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const { toast } = useToast()
@@ -19,11 +22,9 @@ export function NewsletterSignup() {
     setIsLoading(true)
 
     try {
-      const response = await fetch('/api/newsletter', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+      const response = await fetch("/api/newsletter", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
       })
 
@@ -31,21 +32,21 @@ export function NewsletterSignup() {
 
       if (result.success) {
         toast({
-          title: "Subscription successful!",
+          title: "Subscribed.",
           description: result.message,
         })
         setEmail("")
       } else {
         toast({
-          title: "Subscription failed",
+          title: "Couldn't subscribe",
           description: result.message,
           variant: "destructive",
         })
       }
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to subscribe. Please try again later.",
+        title: "Something went wrong",
+        description: "Please try again in a moment.",
         variant: "destructive",
       })
     } finally {
@@ -54,37 +55,44 @@ export function NewsletterSignup() {
   }
 
   return (
-    <section className="w-full py-12 md:py-24 lg:py-32 border-t">
-      <div className="container px-4 md:px-6">
-        <div className="flex flex-col items-center justify-center space-y-4 text-center">
-          <div className="space-y-2">
-            <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">Stay Updated</h2>
-            <p className="max-w-[600px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-              Subscribe to our newsletter to receive updates on our latest research and blog posts.
-            </p>
+    <section>
+      <div className="container py-20 md:py-24">
+        <div className="grid gap-10 md:grid-cols-12">
+          <div className="md:col-span-2">
+            <p className="label-mono">{sectionLabel}</p>
           </div>
-          <div className="w-full max-w-md space-y-2">
-            <form onSubmit={handleSubmit} className="flex w-full max-w-md flex-col gap-2 sm:flex-row">
+          <div className="md:col-span-10 lg:col-span-9">
+            <h2 className="max-w-xl text-2xl font-semibold tracking-tight sm:text-3xl">
+              Occasional notes when we publish.
+            </h2>
+            <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground md:text-[15px]">
+              No drip campaigns, no roundups, no marketing. Just an email when
+              there's something new on the site.
+            </p>
+            <form
+              onSubmit={handleSubmit}
+              className="mt-8 flex w-full max-w-lg flex-col gap-2 sm:flex-row"
+            >
               <Input
                 type="email"
-                placeholder="Enter your email"
+                placeholder="you@somewhere.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="flex-1"
+                aria-label="Email address"
+                className="flex-1 rounded-none border-foreground/20 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-foreground"
               />
-              <Button type="submit" disabled={isLoading}>
-                {isLoading ? (
-                  <span className="animate-pulse">Subscribing...</span>
-                ) : (
-                  <>
-                    Subscribe
-                    <Send className="ml-2 h-4 w-4" />
-                  </>
-                )}
+              <Button
+                type="submit"
+                disabled={isLoading}
+                className="rounded-none bg-foreground text-background hover:bg-foreground/90"
+              >
+                {isLoading ? "Subscribing…" : "Subscribe"}
               </Button>
             </form>
-            <p className="text-xs text-gray-500">We respect your privacy. Unsubscribe at any time.</p>
+            <p className="mt-3 text-xs text-muted-foreground">
+              Unsubscribe any time. We never share your address.
+            </p>
           </div>
         </div>
       </div>

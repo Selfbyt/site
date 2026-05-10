@@ -6,8 +6,11 @@
     "node": ">=20.0.0"
   },
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --turbo",
+    "dev:slow": "next dev",
     "build": "next build",
+    "seed:products": "node scripts/seed-products.mjs",
+    "reset:sanity": "node scripts/reset-sanity.mjs",
     "postbuild": "next-sitemap",
     "build:cloudflare": "NODE_ENV=production npx tailwindcss -i ./styles/globals.css -o ./styles/output.css && next build",
     "start": "next start",

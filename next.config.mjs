@@ -9,18 +9,7 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  // Optimize for smaller bundle size
   compress: true,
-  webpack: (config, { isServer }) => {
-    // Optimize bundle size
-    config.optimization = {
-      ...config.optimization,
-      minimize: true,
-    }
-    
-    return config;
-  },
-  // This is now at the root level instead of experimental section as per Next.js 15+ recommendation
   outputFileTracingExcludes: {
     '*': [
       'node_modules/@swc/core-linux-x64-gnu',
@@ -28,8 +17,15 @@ const nextConfig = {
       'node_modules/@esbuild/linux-x64',
     ],
   },
-  // Keep experimental section for other future options
-  experimental: {}
+  experimental: {
+    // Keep prefetched/visited route segments in the client cache longer
+    // so back/forward and hover-then-click navigation feels instant.
+    staleTimes: {
+      dynamic: 60,
+      static: 300,
+    },
+    optimizePackageImports: ['lucide-react'],
+  },
 }
 
 export default nextConfig

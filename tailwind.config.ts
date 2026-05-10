@@ -12,12 +12,20 @@ const config: Config = {
     container: {
       center: true,
       padding: {
-        DEFAULT: '1rem',
+        DEFAULT: '1.25rem',
         sm: '2rem',
-        lg: '4rem'
+        lg: '3rem',
+        xl: '4rem'
       },
+      screens: {
+        '2xl': '1280px'
+      }
     },
   	extend: {
+  		fontFamily: {
+  			sans: ['var(--font-sans)', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+  			mono: ['var(--font-mono)', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
+  		},
   		colors: {
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',

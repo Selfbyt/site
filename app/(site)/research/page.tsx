@@ -1,103 +1,175 @@
+import type { Metadata } from "next"
 import Link from "next/link"
-import { Calendar, Download, FileText } from "lucide-react"
+import { ArrowRight } from "lucide-react"
 import { notFound } from "next/navigation"
 
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { getResearchPapers } from "@/lib/sanity"
 
-export const revalidate = 3600 // Revalidate this page every hour
+export const metadata: Metadata = {
+  title: "Research",
+  description:
+    "Selfbyt research papers, technical reports, and reproducible experiments.",
+}
 
-export default async function ResearchPage() {
-  const researchPapers = await getResearchPapers()
+// 24h. Sanity webhook (/api/revalidate) handles immediate updates.
+export const revalidate = 86400
 
-  if (!researchPapers) {
-    notFound()
-  }
+type Paper = {
+  _id: string
+  title: string
+  slug: { current: string }
+  abstract: string
+  category: string
+  publishedAt: string
+  authors: string[]
+  pdfUrl?: string
+}
 
-  // Extract unique categories from research papers
-  const categories = ["All", ...new Set(researchPapers.map((paper: any) => paper.category))]
+export default async function ResearchPage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ category?: string }>
+}) {
+  const papers = (await getResearchPapers()) as Paper[] | null
+  const sp = (await searchParams) || {}
+
+  if (!papers) notFound()
+
+  const categories = Array.from(
+    new Set(papers.map((p) => p.category).filter(Boolean)),
+  )
+  const active = sp.category && categories.includes(sp.category) ? sp.category : "All"
+
+  const filtered =
+    active === "All" ? papers : papers.filter((p) => p.category === active)
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <section className="w-full py-12 md:py-24 lg:py-32 bg-gradient-to-br from-[#2D1D5A] to-[#1804FF] text-white">
-        <div className="container px-4 md:px-6">
-          <div className="flex flex-col items-center justify-center space-y-4 text-center">
-            <div className="space-y-2">
-              <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl">Research Papers</h1>
-              <p className="max-w-[700px] text-gray-200 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                Explore our published research on neuroscience, AI, and human-computer interaction.
+    <>
+      <section className="border-b" style={{ borderColor: "hsl(var(--rule))" }}>
+        <div className="container py-20 md:py-28">
+          <div className="grid gap-10 md:grid-cols-12">
+            <div className="md:col-span-2">
+              <p className="label-mono">Research</p>
+            </div>
+            <div className="md:col-span-10 lg:col-span-9">
+              <h1 className="max-w-3xl text-balance text-3xl font-semibold leading-[1.1] tracking-tight sm:text-4xl md:text-5xl">
+                Papers, technical reports, and reproducible experiments.
+              </h1>
+              <p className="mt-8 max-w-2xl text-pretty text-base leading-relaxed text-muted-foreground md:text-lg">
+                The full archive in reverse chronological order. Filter by area
+                if you have a specific question in mind.
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="w-full py-12 md:py-24 lg:py-32">
-        <div className="container px-4 md:px-6">
-          <Tabs defaultValue="All" className="w-full">
-            <div className="flex justify-center mb-8">
-              <TabsList>
-                {categories.map((category) => (
-                  <TabsTrigger key={category} value={category}>
-                    {category}
-                  </TabsTrigger>
-                ))}
-              </TabsList>
+      <section>
+        <div className="container py-12 md:py-16">
+          <div className="grid gap-10 md:grid-cols-12">
+            <div className="md:col-span-2">
+              <p className="label-mono">Archive</p>
             </div>
+            <div className="md:col-span-10 lg:col-span-9">
+              {categories.length > 0 && (
+                <nav
+                  aria-label="Filter by category"
+                  className="flex flex-wrap items-center gap-x-5 gap-y-2 border-b pb-5 font-mono text-[11px] uppercase tracking-wider"
+                  style={{ borderColor: "hsl(var(--rule))" }}
+                >
+                  <FilterLink label="All" active={active === "All"} href="/research" />
+                  {categories.map((c) => (
+                    <FilterLink
+                      key={c}
+                      label={c}
+                      active={active === c}
+                      href={`/research?category=${encodeURIComponent(c)}`}
+                    />
+                  ))}
+                </nav>
+              )}
 
-            {categories.map((category) => (
-              <TabsContent key={category} value={category} className="w-full">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  {researchPapers
-                    .filter((paper: any) => category === "All" || paper.category === category)
-                    .map((paper: any) => {
-                      // Format the date
-                      const formattedDate = new Date(paper.publishedAt).toLocaleDateString("en-US", {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      })
-
-                      return (
-                        <Card key={paper._id} className="flex flex-col">
-                          <CardHeader>
-                            <div className="text-sm text-[#1804FF] font-medium">{paper.category}</div>
-                            <CardTitle className="mt-2">{paper.title}</CardTitle>
-                            <CardDescription className="flex items-center gap-1 text-sm">
-                              <Calendar className="h-3 w-3" />
-                              {formattedDate} • {paper.authors.join(", ")}
-                            </CardDescription>
-                          </CardHeader>
-                          <CardContent className="flex-1">
-                            <p className="text-gray-500">{paper.abstract}</p>
-                          </CardContent>
-                          <CardFooter className="flex flex-col sm:flex-row gap-2">
-                            <Link href={`/research/${paper.slug.current}`} passHref>
-                              <Button variant="outline" className="w-full sm:w-auto">
-                                <FileText className="mr-2 h-4 w-4" />
-                                Read Paper
-                              </Button>
-                            </Link>
-                            {paper.pdfUrl && (
-                              <Link href={paper.pdfUrl} passHref>
-                                <Button variant="outline" className="w-full sm:w-auto">
-                                  <Download className="mr-2 h-4 w-4" />
-                                  Download PDF
-                                </Button>
-                              </Link>
-                            )}
-                          </CardFooter>
-                        </Card>
-                      )
-                    })}
-                </div>
-              </TabsContent>
-            ))}
-          </Tabs>
+              {filtered.length === 0 ? (
+                <p className="mt-12 text-sm text-muted-foreground">
+                  No papers in this category yet.
+                </p>
+              ) : (
+                <ul className="mt-2">
+                  {filtered.map((paper) => {
+                    const formattedDate = new Date(paper.publishedAt).toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })
+                    return (
+                      <li
+                        key={paper._id}
+                        className="border-b py-8 first:pt-10"
+                        style={{ borderColor: "hsl(var(--rule))" }}
+                      >
+                        <Link
+                          href={`/research/${paper.slug.current}`}
+                          className="group block"
+                        >
+                          <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
+                            <p className="font-mono text-[11px] uppercase tracking-wider text-muted-foreground">
+                              {paper.category}
+                            </p>
+                            <time className="font-mono text-[11px] uppercase tracking-wider text-muted-foreground/70">
+                              {formattedDate}
+                            </time>
+                          </div>
+                          <h2 className="mt-3 max-w-3xl text-lg font-semibold leading-snug tracking-tight transition-colors group-hover:text-muted-foreground md:text-xl">
+                            {paper.title}
+                          </h2>
+                          {paper.authors?.length ? (
+                            <p className="mt-2 font-mono text-[11px] uppercase tracking-wider text-muted-foreground/80">
+                              {paper.authors.join(" · ")}
+                            </p>
+                          ) : null}
+                          <p className="mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground md:text-[15px]">
+                            {paper.abstract}
+                          </p>
+                          <span className="mt-4 inline-flex items-center gap-1.5 text-sm text-foreground">
+                            <span className="border-b border-foreground/40 pb-0.5 transition-colors group-hover:border-foreground">
+                              Read paper
+                            </span>
+                            <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+                          </span>
+                        </Link>
+                      </li>
+                    )
+                  })}
+                </ul>
+              )}
+            </div>
+          </div>
         </div>
       </section>
-    </div>
+    </>
+  )
+}
+
+function FilterLink({
+  label,
+  active,
+  href,
+}: {
+  label: string
+  active: boolean
+  href: string
+}) {
+  return (
+    <Link
+      href={href}
+      className={
+        active
+          ? "text-foreground"
+          : "text-muted-foreground hover:text-foreground"
+      }
+      aria-current={active ? "page" : undefined}
+    >
+      {label}
+    </Link>
   )
 }

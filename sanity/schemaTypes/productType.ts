@@ -25,6 +25,55 @@ export const productType = defineType({
       name: 'description',
       title: 'Description',
       type: 'text',
+      description: 'Long-form description used on the product detail page.',
+    }),
+    defineField({
+      name: 'summary',
+      title: 'Summary',
+      type: 'text',
+      rows: 3,
+      description: 'Short summary used on the homepage and product list.',
+      validation: (Rule) => Rule.max(280),
+    }),
+    defineField({
+      name: 'status',
+      title: 'Status',
+      type: 'string',
+      description: 'Lifecycle stage of the product. Used as a small label on cards.',
+      options: {
+        list: [
+          {title: 'Internal', value: 'internal'},
+          {title: 'Private alpha', value: 'alpha'},
+          {title: 'Private beta', value: 'beta'},
+          {title: 'Public', value: 'public'},
+          {title: 'Archived', value: 'archived'},
+        ],
+        layout: 'dropdown',
+      },
+      initialValue: 'internal',
+    }),
+    defineField({
+      name: 'cta',
+      title: 'Call to action',
+      type: 'object',
+      description: 'Override the default CTA button on the product card.',
+      fields: [
+        defineField({name: 'label', title: 'Label', type: 'string'}),
+        defineField({
+          name: 'href',
+          title: 'Href',
+          type: 'string',
+          description: 'Internal path (e.g. /contact) or external URL.',
+        }),
+      ],
+    }),
+    defineField({
+      name: 'order',
+      title: 'Order',
+      type: 'number',
+      description:
+        'Lower numbers appear first on the homepage. Defaults to 100 if unset.',
+      initialValue: 100,
     }),
     defineField({
       name: 'mainImage',

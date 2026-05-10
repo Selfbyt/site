@@ -9,7 +9,9 @@ export const client = createClient({
   projectId,
   dataset,
   apiVersion,
-  useCdn: process.env.NODE_ENV === "production",
+  useCdn: true,
+  perspective: "published",
+  stega: false,
 })
 
 // Helper function for generating image URLs with the Sanity Image Pipeline
@@ -33,6 +35,24 @@ export async function getBlogPosts() {
       "authorImage": author->image,
       mainImage
     }`,
+  )
+}
+
+/** First N posts only — faster for home page “latest” section */
+export async function getRecentBlogPosts(limit: number) {
+  return client.fetch(
+    `*[_type == "post"] | order(publishedAt desc)[0...$limit] {
+      _id,
+      title,
+      slug,
+      excerpt,
+      "category": category->title,
+      publishedAt,
+      "author": author->name,
+      "authorImage": author->image,
+      mainImage
+    }`,
+    { limit },
   )
 }
 
@@ -71,6 +91,23 @@ export async function getResearchPapers() {
   )
 }
 
+/** First N papers only — faster for home page featured section */
+export async function getRecentResearchPapers(limit: number) {
+  return client.fetch(
+    `*[_type == "researchPaper"] | order(publishedAt desc)[0...$limit] {
+      _id,
+      title,
+      slug,
+      abstract,
+      "category": category->title,
+      publishedAt,
+      "authors": authors[]->name,
+      pdfUrl
+    }`,
+    { limit },
+  )
+}
+
 // Fetch a single research paper by slug
 export async function getResearchPaperBySlug(slug: string) {
   return client.fetch(
@@ -89,102 +126,36 @@ export async function getResearchPaperBySlug(slug: string) {
   )
 }
 
-// Fetch all case studies
-export async function getCaseStudies() {
+// Fetch products for the homepage software section.
+// Returns featured products first, ordered by `order`, then by title.
+export async function getFeaturedProducts(limit = 3) {
   return client.fetch(
-    `*[_type == "caseStudy"] | order(publishedAt desc) {
-      _id,
-      title,
-      slug,
-      excerpt,
-      "category": category->title,
-      publishedAt,
-      client,
-      "authors": authors[]->name
-    }`,
+    `*[_type == "product" && (featured == true || coalesce(status, "internal") != "archived")]
+      | order(coalesce(order, 100) asc, title asc)[0...$limit] {
+        _id,
+        title,
+        "slug": slug.current,
+        summary,
+        description,
+        status,
+        cta,
+        "category": category->title
+      }`,
+    { limit },
   )
 }
 
-// Fetch a single case study by slug
-export async function getCaseStudyBySlug(slug: string) {
-  return client.fetch(
-    `*[_type == "caseStudy" && slug.current == $slug][0] {
-      _id,
-      title,
-      slug,
-      excerpt,
-      summary,
-      body,
-      "category": category->title,
-      publishedAt,
-      client,
-      "authors": authors[]->name
-    }`,
-    { slug },
-  )
-}
-
-// Fetch all products
+// Fetch all products for the (future) /products index
 export async function getProducts() {
   return client.fetch(
-    `*[_type == "product"] | order(title asc) {
-      _id,
-      title,
-      slug,
-      description,
-      "category": category->title,
-      icon
-    }`,
+    `*[_type == "product" && coalesce(status, "internal") != "archived"]
+      | order(coalesce(order, 100) asc, title asc) {
+        _id,
+        title,
+        "slug": slug.current,
+        summary,
+        status,
+        "category": category->title
+      }`,
   )
-}
-
-// Fetch a single product by slug
-export async function getProductBySlug(slug: string) {
-  return client.fetch(
-    `*[_type == "product" && slug.current == $slug][0] {
-      _id,
-      title,
-      slug,
-      description,
-      overview,
-      "category": category->title,
-      icon,
-      features,
-      useCases,
-      technicalSpecs,
-      documentation
-    }`,
-    { slug },
-  )
-}
-
-// Fetch featured content
-export async function getFeaturedContent() {
-  return client.fetch(`{
-    "featuredResearch": *[_type == "researchPaper" && featured == true] | order(publishedAt desc)[0..2] {
-      _id,
-      title,
-      slug,
-      abstract,
-      "category": category->title,
-      publishedAt
-    },
-    "featuredPosts": *[_type == "post" && featured == true] | order(publishedAt desc)[0..2] {
-      _id,
-      title,
-      slug,
-      excerpt,
-      "category": category->title,
-      publishedAt,
-      "author": author->name
-    },
-    "featuredProducts": *[_type == "product" && featured == true] | order(title asc)[0..1] {
-      _id,
-      title,
-      slug,
-      description,
-      "category": category->title,
-      icon
-    }
-  }`)
 }

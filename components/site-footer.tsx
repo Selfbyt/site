@@ -1,73 +1,79 @@
 import Link from "next/link"
-import { Mail } from "lucide-react"
 
 import { Logo } from "@/components/logo"
 
 export function SiteFooter() {
+  const year = new Date().getFullYear()
+
   return (
-    <footer className="border-t bg-background">
-      <div className="container flex flex-col gap-8 py-8 md:py-12">
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
-          <div className="flex flex-col gap-2">
+    <footer className="mt-32 border-t" style={{ borderColor: "hsl(var(--rule))" }}>
+      <div className="container py-14">
+        <div className="grid grid-cols-2 gap-10 md:grid-cols-12">
+          <div className="col-span-2 md:col-span-5">
             <Link href="/" className="flex items-center gap-2">
-              <Logo className="h-6 w-6" />
-              <span className="font-bold">Selfbyt</span>
+              <Logo className="h-5 w-5" />
+              <span className="text-sm font-semibold tracking-tight">Selfbyt</span>
             </Link>
-            <p className="text-sm text-muted-foreground">Computing from the Ground Up</p>
+            <p className="mt-4 max-w-xs text-sm leading-relaxed text-muted-foreground">
+              A small lab working on systems and learning. Notes, papers, and
+              tools we use ourselves.
+            </p>
           </div>
-          <div className="grid grid-cols-2 gap-8 md:col-span-3 md:grid-cols-3">
-            <div className="flex flex-col gap-2">
-              <h3 className="font-semibold">Organization</h3>
-              <ul className="flex flex-col gap-2 text-sm text-muted-foreground">
-                <li>
-                  <Link href="/about">About</Link>
-                </li>
-                <li>
-                  <Link href="/team">Team</Link>
-                </li>
-                <li>
-                  <Link href="/contact">Contact</Link>
-                </li>
-              </ul>
-            </div>
-            <div className="flex flex-col gap-2">
-              <h3 className="font-semibold">Resources</h3>
-              <ul className="flex flex-col gap-2 text-sm text-muted-foreground">
-                <li>
-                  <Link href="/research">Research</Link>
-                </li>
-                <li>
-                  <Link href="/blog">Blog</Link>
-                </li>
-                <li>
-                  <Link href="/case-studies">Case Studies</Link>
-                </li>
-                <li>
-                  <Link href="/products">Products</Link>
-                </li>
-              </ul>
-            </div>
-            <div className="flex flex-col gap-2">
-              <h3 className="font-semibold">Contact</h3>
-              <ul className="flex flex-col gap-2 text-sm text-muted-foreground">
-                <li className="flex items-center gap-2">
-                  <Mail className="h-4 w-4" />
-                  <a href="mailto:hello@selfbyt.com">hello@selfbyt.com</a>
-                </li>
-              </ul>
-            </div>
+
+          <div className="md:col-span-3">
+            <p className="label-mono">Site</p>
+            <ul className="mt-4 space-y-2 text-sm">
+              <li>
+                <Link href="/research" className="text-foreground/80 hover:text-foreground">
+                  Research
+                </Link>
+              </li>
+              <li>
+                <Link href="/blog" className="text-foreground/80 hover:text-foreground">
+                  Writing
+                </Link>
+              </li>
+              <li>
+                <Link href="/about" className="text-foreground/80 hover:text-foreground">
+                  About
+                </Link>
+              </li>
+              <li>
+                <Link href="/team" className="text-foreground/80 hover:text-foreground">
+                  Team
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          <div className="md:col-span-4">
+            <p className="label-mono">Contact</p>
+            <ul className="mt-4 space-y-2 text-sm">
+              <li>
+                <a
+                  href="mailto:hello@selfbyt.com"
+                  className="text-foreground/80 hover:text-foreground"
+                >
+                  hello@selfbyt.com
+                </a>
+              </li>
+              <li>
+                <Link href="/contact" className="text-foreground/80 hover:text-foreground">
+                  Send a message
+                </Link>
+              </li>
+            </ul>
           </div>
         </div>
-        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <p className="text-sm text-muted-foreground">
-            &copy; {new Date().getFullYear()} Selfbyt. All rights reserved.
-          </p>
-          <div className="flex gap-4">
-            <Link href="/privacy" className="text-sm text-muted-foreground">
-              Privacy Policy
+
+        <div className="mt-14 flex flex-col gap-3 border-t pt-6 text-xs text-muted-foreground md:flex-row md:items-center md:justify-between" style={{ borderColor: "hsl(var(--rule))" }}>
+          <p>© {year} Selfbyt. All rights reserved.</p>
+          <div className="flex gap-5">
+            <Link href="/privacy" className="hover:text-foreground">
+              Privacy
             </Link>
-            <Link href="/terms" className="text-sm text-muted-foreground">
-              Terms of Service
+            <Link href="/terms" className="hover:text-foreground">
+              Terms
             </Link>
           </div>
         </div>
