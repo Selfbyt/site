@@ -1,0 +1,11 @@
+# *
+User-agent: *
+Allow: /
+Disallow: /studio/
+Disallow: /api/
+
+# Host
+Host: https://selfbyt.com
+
+# Sitemaps
+Sitemap: https://selfbyt.com/sitemap.xml
