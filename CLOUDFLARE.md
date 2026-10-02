@@ -19,7 +19,11 @@ Only `/api/*` is configured to run the Worker first. Ordinary pages and OG asset
 
 `npm run dev` still uses the Node development API. Test the whole production frontend and Worker together on port 8787. Live form submissions send real email or subscribe real addresses; automated tests use mocks.
 
-## Before deployment
+## GitHub deployments
+
+Cloudflare Workers Builds is connected to `Selfbyt/site`, production branch `codex/vite-cloudflare`. Pushes to that branch run `npm run build` then `npx wrangler deploy`. Root directory is `/`, preview builds are disabled, and the three public Sanity variables are configured in the build environment. The existing `site build token` is selected. `main` remains unchanged for the existing Netlify site.
+
+## Deployment configuration
 
 Use `npx wrangler secret put NAME` separately for each required secret:
 
