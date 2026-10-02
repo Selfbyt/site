@@ -6,17 +6,17 @@ export function SiteFooter() {
   const year = new Date().getFullYear()
 
   return (
-    <footer className="mt-32 border-t" style={{ borderColor: "hsl(var(--rule))" }}>
+    <footer className="border-t" style={{ borderColor: "hsl(var(--rule))" }}>
       <div className="container py-14">
         <div className="grid grid-cols-2 gap-10 md:grid-cols-12">
           <div className="col-span-2 md:col-span-5">
             <Link href="/" className="flex items-center gap-2">
-              <Logo className="h-5 w-5" />
-              <span className="text-sm font-semibold tracking-tight">Selfbyt</span>
+              <Logo className="h-6 w-14" />
+              <span className="text-xl font-semibold tracking-tight">Selfbyt</span>
             </Link>
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-muted-foreground">
-              A small lab working on systems and learning. Notes, papers, and
-              tools we use ourselves.
+              Building the foundations for intelligent systems. AI infrastructure,
+              experiments, and the questions that come next.
             </p>
           </div>
 

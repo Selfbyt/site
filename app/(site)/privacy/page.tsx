@@ -51,8 +51,8 @@ export default function PrivacyPage() {
                 </p>
                 <p>
                   Like most websites, our hosting provider records standard
-                  request logs — IP address, user-agent, request path, and
-                  timestamps — to keep the site running and detect abuse. We
+                  request logs (IP address, user-agent, request path, and
+                  timestamps) to keep the site running and detect abuse. We
                   do not run analytics or third-party trackers on this site.
                 </p>
 

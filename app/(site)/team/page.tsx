@@ -36,7 +36,7 @@ export default function TeamPage() {
                 Small group. Distributed. We hire rarely and carefully.
               </h1>
               <p className="mt-8 max-w-2xl text-pretty text-base leading-relaxed text-muted-foreground md:text-lg">
-                Selfbyt isn't a hiring funnel — it's a research group that
+                Selfbyt is a research group that
                 occasionally has room for one more person. If our work
                 resonates and your background overlaps, we'd like to hear from
                 you.

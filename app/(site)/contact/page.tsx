@@ -79,7 +79,7 @@ export default function ContactPage() {
               </h1>
               <p className="mt-8 max-w-2xl text-pretty text-base leading-relaxed text-muted-foreground md:text-lg">
                 Research questions, software access, hiring, or partnership
-                — all the same inbox. We read everything; we reply when there's
+                inquiries all reach the same inbox. We read everything; we reply when there's
                 something useful to say.
               </p>
             </div>

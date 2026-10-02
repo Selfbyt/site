@@ -4,7 +4,7 @@ import Link from "next/link"
 export const metadata: Metadata = {
   title: "About",
   description:
-    "Selfbyt is a small research lab working on computing systems and machine learning.",
+    "Selfbyt builds AI infrastructure and explores new ways to represent and run intelligent systems.",
 }
 
 const PRINCIPLES = [
@@ -21,7 +21,7 @@ const PRINCIPLES = [
   {
     no: "iii.",
     title: "Open notes, when we can",
-    body: "We share method notes, scripts, and partial results — not just polished papers. Some work stays internal while it's still rough.",
+    body: "We share method notes, scripts, and partial results alongside our papers. Some work stays internal while we test and refine it.",
   },
   {
     no: "iv.",
@@ -62,13 +62,12 @@ export default function AboutPage() {
             </div>
             <div className="md:col-span-10 lg:col-span-9">
               <h1 className="max-w-3xl text-balance text-3xl font-semibold leading-[1.1] tracking-tight sm:text-4xl md:text-5xl">
-                Selfbyt is a small research group working on computing systems
-                and machine learning.
+                We build AI infrastructure and explore how intelligent systems work.
               </h1>
               <p className="mt-8 max-w-2xl text-pretty text-base leading-relaxed text-muted-foreground md:text-lg">
-                We publish papers and notes, share code where we can, and build
-                a few internal tools that we use ourselves. The site is the
-                archive of that work.
+                We experiment with model compression, representations, and execution
+                to understand how AI can work with fewer resources. We turn useful
+                findings into tools and use what we learn to inform future model development.
               </p>
             </div>
           </div>

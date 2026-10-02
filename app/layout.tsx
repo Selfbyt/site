@@ -1,39 +1,45 @@
-import type React from "react"
-import "@/app/globals.css"
-import type { Metadata } from "next"
+import type React from "react";
+import "@/app/globals.css";
+import type { Metadata } from "next";
 
-import { ThemeProvider } from "@/components/theme-provider"
+import { ThemeProvider } from "@/components/theme-provider";
 
 export const metadata: Metadata = {
   title: {
-    default: "Selfbyt — Research and software for intelligent systems",
-    template: "%s — Selfbyt",
+    default: "Selfbyt | Foundations for intelligent systems",
+    template: "%s | Selfbyt",
   },
   description:
-    "Building research and software for intelligent systems. Papers, notes, and the tools behind them.",
+    "Selfbyt builds AI infrastructure and explores new ways to represent and run models. Infrastructure today. A foundation for future intelligence.",
   metadataBase: new URL("https://selfbyt.com"),
   openGraph: {
     title: "Selfbyt",
     description:
-      "Research and software for intelligent systems.",
+      "AI infrastructure and experimental research. Building the foundations for intelligent systems.",
     type: "website",
   },
-}
+};
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode
+  children: React.ReactNode;
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="font-sans">
-        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false} disableTransitionOnChange>
+        <ThemeProvider
+          attribute="class"
+          forcedTheme="light"
+          defaultTheme="light"
+          enableSystem={false}
+          disableTransitionOnChange
+        >
           <ClientLayoutWrapper>{children}</ClientLayoutWrapper>
         </ThemeProvider>
       </body>
     </html>
-  )
+  );
 }
 
-import { ClientLayoutWrapper } from "./client-layout-wrapper"
+import { ClientLayoutWrapper } from "./client-layout-wrapper";

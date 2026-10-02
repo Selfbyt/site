@@ -1,8 +1,9 @@
+import { fileURLToPath } from "node:url";
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
+  turbopack: { root: fileURLToPath(new URL(".", import.meta.url)) },
+  outputFileTracingRoot: fileURLToPath(new URL(".", import.meta.url)),
   typescript: {
     ignoreBuildErrors: true,
   },
@@ -11,10 +12,10 @@ const nextConfig = {
   },
   compress: true,
   outputFileTracingExcludes: {
-    '*': [
-      'node_modules/@swc/core-linux-x64-gnu',
-      'node_modules/@swc/core-linux-x64-musl',
-      'node_modules/@esbuild/linux-x64',
+    "*": [
+      "node_modules/@swc/core-linux-x64-gnu",
+      "node_modules/@swc/core-linux-x64-musl",
+      "node_modules/@esbuild/linux-x64",
     ],
   },
   experimental: {
@@ -24,8 +25,8 @@ const nextConfig = {
       dynamic: 60,
       static: 300,
     },
-    optimizePackageImports: ['lucide-react'],
+    optimizePackageImports: ["lucide-react"],
   },
-}
+};
 
-export default nextConfig
+export default nextConfig;

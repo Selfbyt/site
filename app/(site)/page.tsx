@@ -1,463 +1,305 @@
-import Link from "next/link"
-import { ArrowRight } from "lucide-react"
+import Link from "next/link";
+import { ArrowRight, ArrowUpRight } from "lucide-react";
+import { getRecentResearchPapers, getRecentBlogPosts } from "@/lib/sanity";
+import { NewsletterSignup } from "@/components/newsletter-signup";
 
-import {
-  getRecentResearchPapers,
-  getRecentBlogPosts,
-  getFeaturedProducts,
-} from "@/lib/sanity"
-import { NewsletterSignup } from "@/components/newsletter-signup"
+export const revalidate = 21600;
 
-// 6 hours. Sanity webhook (/api/revalidate) handles immediate updates.
-export const revalidate = 21600
-
-const FOCUS_AREAS = [
-  {
-    no: "a.",
-    title: "Computing systems",
-    body: "Inference paths, memory behavior, and runtime measurements on real hardware.",
-    tags: ["Inference", "Compression", "Profiling"],
-  },
-  {
-    no: "b.",
-    title: "Learning methods",
-    body: "Models and representations where the structure is explicit and the evaluation is honest.",
-    tags: ["Sparse structure", "Architecture", "Evaluation"],
-  },
-  {
-    no: "c.",
-    title: "Practice",
-    body: "Method notes, shared artifacts, and writing — described well enough to build on.",
-    tags: ["Notes", "Code", "Papers"],
-  },
-]
-
-type Paper = {
-  _id: string
-  title: string
-  slug: { current: string }
-  abstract: string
-  category: string
-  publishedAt: string
-}
-
-type Post = {
-  _id: string
-  title: string
-  slug: { current: string }
-  excerpt: string
-  publishedAt: string
-  author?: string
-}
-
-type Product = {
-  _id: string
-  title: string
-  slug?: string
-  summary?: string
-  description?: string
-  status?: "internal" | "alpha" | "beta" | "public" | "archived"
-  category?: string
-  cta?: { label?: string; href?: string }
-}
-
-const STATUS_LABEL: Record<NonNullable<Product["status"]>, string> = {
-  internal: "Internal · early access",
-  alpha: "Private alpha",
-  beta: "Private beta",
-  public: "Public",
-  archived: "Archived",
-}
-
-async function safe<T>(fn: () => Promise<unknown>): Promise<T[] | null> {
+type Article = {
+  _id: string;
+  title: string;
+  slug: { current: string };
+  abstract?: string;
+  excerpt?: string;
+  publishedAt: string;
+};
+async function safe<T>(fn: () => Promise<unknown>): Promise<T[]> {
   try {
-    const result = (await fn()) as T[] | null | undefined
-    return result ?? null
-  } catch (err) {
-    if (process.env.NODE_ENV !== "production") {
-      console.warn("[home] sanity fetch failed:", err)
-    }
-    return null
+    return ((await fn()) as T[] | null) ?? [];
+  } catch (error) {
+    console.warn(
+      "[home] Content unavailable",
+      error instanceof Error ? error.message : "Unknown error",
+    );
+    return [];
   }
 }
 
 export default async function Home() {
-  const [papers, posts, products] = await Promise.all([
-    safe<Paper[]>(() => getRecentResearchPapers(3)),
-    safe<Post[]>(() => getRecentBlogPosts(3)),
-    safe<Product[]>(() => getFeaturedProducts(2)),
-  ])
-
-  const blocks: { key: string; render: (no: string) => React.ReactNode }[] = []
-
-  blocks.push({
-    key: "lab",
-    render: (no) => <Hero no={no} key="lab" />,
-  })
-
-  blocks.push({
-    key: "focus",
-    render: (no) => <Focus no={no} key="focus" />,
-  })
-
-  if (papers && papers.length > 0) {
-    blocks.push({
-      key: "research",
-      render: (no) => <ResearchBlock no={no} key="research" papers={papers} />,
-    })
-  }
-
-  if (posts && posts.length > 0) {
-    blocks.push({
-      key: "writing",
-      render: (no) => <WritingBlock no={no} key="writing" posts={posts} />,
-    })
-  }
-
-  if (products && products.length > 0) {
-    blocks.push({
-      key: "software",
-      render: (no) => (
-        <SoftwareBlock no={no} key="software" products={products} />
-      ),
-    })
-  }
-
-  blocks.push({
-    key: "subscribe",
-    render: (no) => (
-      <NewsletterSignup
-        key="subscribe"
-        sectionLabel={`${no} / Subscribe`}
-      />
-    ),
-  })
-
+  const [papers, posts] = await Promise.all([
+    safe<Article>(() => getRecentResearchPapers(2)),
+    safe<Article>(() => getRecentBlogPosts(2)),
+  ]);
+  const articles = [
+    ...papers.map((p) => ({
+      ...p,
+      kind: "Research",
+      href: `/research/${p.slug.current}`,
+    })),
+    ...posts.map((p) => ({
+      ...p,
+      kind: "Writing",
+      href: `/blog/${p.slug.current}`,
+    })),
+  ];
   return (
-    <>
-      {blocks.map((b, i) => b.render(formatNo(i + 1)))}
-    </>
-  )
-}
-
-function formatNo(n: number) {
-  return String(n).padStart(2, "0")
-}
-
-function SectionHeader({ no, label }: { no: string; label: string }) {
-  return (
-    <p className="label-mono">
-      {no} / {label}
-    </p>
-  )
-}
-
-function Hero({ no }: { no: string }) {
-  return (
-    <section className="border-b" style={{ borderColor: "hsl(var(--rule))" }}>
-      <div className="container py-20 md:py-28 lg:py-36">
-        <div className="grid gap-10 md:grid-cols-12">
-          <div className="md:col-span-2">
-            <SectionHeader no={no} label="Lab" />
-          </div>
-          <div className="md:col-span-10 lg:col-span-9">
-            <h1 className="text-balance text-3xl font-semibold leading-[1.05] tracking-tight sm:text-4xl md:text-5xl lg:text-[3.5rem]">
-              Building research and software for{" "}
-              <span className="text-muted-foreground">intelligent systems</span>.
+    <div className="home-page">
+      <section className="home-hero">
+        <div className="container hero-layout">
+          <div className="hero-copy">
+            <h1>
+              Intelligence.
+              <br />
+              Built from
+              <br />
+              <span>the foundations.</span>
             </h1>
-            <p className="mt-8 max-w-xl text-pretty text-base leading-relaxed text-muted-foreground md:text-lg">
-              Papers, notes, and the tools behind them.
+            <p className="hero-description">
+              We build AI infrastructure and explore new ways to represent and
+              run models. From the systems underneath to the intelligence ahead.
             </p>
-            <div className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-3 text-sm">
-              <Link
-                href="/research"
-                className="group inline-flex items-center gap-2 font-medium text-foreground"
-              >
-                <span className="border-b border-foreground/40 pb-0.5 transition-colors group-hover:border-foreground">
-                  Read research
-                </span>
-                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+            <div className="hero-actions">
+              <Link href="#work" className="brand-button">
+                Explore our work <ArrowRight size={17} aria-hidden="true" />
               </Link>
-              <Link
-                href="/blog"
-                className="text-muted-foreground hover:text-foreground"
-              >
-                Browse writing
-              </Link>
-              <Link
-                href="/about"
-                className="text-muted-foreground hover:text-foreground"
-              >
-                About
+              <Link href="/about" className="text-link">
+                Meet Selfbyt <ArrowUpRight size={17} aria-hidden="true" />
               </Link>
             </div>
           </div>
-        </div>
-      </div>
-    </section>
-  )
-}
-
-function Focus({ no }: { no: string }) {
-  return (
-    <section className="border-b" style={{ borderColor: "hsl(var(--rule))" }}>
-      <div className="container py-20 md:py-24">
-        <div className="grid gap-10 md:grid-cols-12">
-          <div className="md:col-span-2">
-            <SectionHeader no={no} label="Focus" />
-          </div>
-          <div className="md:col-span-10 lg:col-span-9">
-            <h2 className="max-w-2xl text-2xl font-semibold tracking-tight sm:text-3xl md:text-[1.875rem]">
-              Three overlapping tracks: how things run, how they learn, and how
-              we describe what we did.
-            </h2>
-            <ul className="mt-14 grid gap-x-10 gap-y-12 md:grid-cols-3">
-              {FOCUS_AREAS.map((area) => (
-                <li
-                  key={area.title}
-                  className="border-t pt-5"
-                  style={{ borderColor: "hsl(var(--rule))" }}
+          <div className="hero-figure" aria-hidden="true">
+            <div className="figure-top">
+              <span>SELFBYT / FIELD 001</span>
+              <span>○ → ●</span>
+            </div>
+            <svg viewBox="0 0 500 450" className="foundation-art">
+              <defs>
+                <pattern
+                  id="field-grid"
+                  width="22"
+                  height="22"
+                  patternUnits="userSpaceOnUse"
                 >
-                  <p className="font-mono text-xs text-muted-foreground">{area.no}</p>
-                  <h3 className="mt-2 text-base font-semibold tracking-tight">
-                    {area.title}
-                  </h3>
-                  <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                    {area.body}
-                  </p>
-                  <ul className="mt-5 flex flex-wrap gap-x-4 gap-y-1 font-mono text-[11px] uppercase tracking-wider text-muted-foreground/80">
-                    {area.tags.map((tag) => (
-                      <li key={tag}>{tag}</li>
-                    ))}
-                  </ul>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </div>
-    </section>
-  )
-}
-
-function ResearchBlock({ no, papers }: { no: string; papers: Paper[] }) {
-  return (
-    <section className="border-b" style={{ borderColor: "hsl(var(--rule))" }}>
-      <div className="container py-20 md:py-24">
-        <div className="grid gap-10 md:grid-cols-12">
-          <div className="md:col-span-2">
-            <SectionHeader no={no} label="Research" />
-          </div>
-          <div className="md:col-span-10 lg:col-span-9">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-              <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-                Recent papers
-              </h2>
-              <Link
-                href="/research"
-                className="text-sm text-muted-foreground hover:text-foreground"
+                  <circle cx="1" cy="1" r="1" fill="#365cf5" opacity=".22" />
+                </pattern>
+                <pattern
+                  id="field-lines"
+                  width="5"
+                  height="5"
+                  patternUnits="userSpaceOnUse"
+                >
+                  <path
+                    d="M0 0V5"
+                    stroke="#365cf5"
+                    strokeWidth="1"
+                    opacity=".23"
+                  />
+                </pattern>
+                <clipPath id="field-disc">
+                  <circle cx="325" cy="245" r="126" />
+                </clipPath>
+              </defs>
+              <rect width="500" height="450" fill="url(#field-grid)" />
+              <path
+                d="M0 245H500M175 0V450M325 0V450"
+                stroke="#365cf5"
+                opacity=".17"
+                strokeDasharray="3 6"
+              />
+              <circle
+                cx="175"
+                cy="205"
+                r="126"
+                fill="url(#field-lines)"
+                stroke="#365cf5"
+                strokeWidth="1"
+              />
+              <circle
+                cx="175"
+                cy="205"
+                r="104"
+                fill="#f4f2ec"
+                stroke="#365cf5"
+                strokeWidth="1"
+              />
+              <circle
+                cx="175"
+                cy="205"
+                r="82"
+                fill="none"
+                stroke="#365cf5"
+                strokeWidth="1"
+              />
+              <circle cx="325" cy="245" r="126" fill="#365cf5" />
+              <g
+                clipPath="url(#field-disc)"
+                stroke="#f4f2ec"
+                opacity=".25"
+                fill="none"
               >
-                All research →
-              </Link>
+                {Array.from({ length: 12 }, (_, i) => (
+                  <ellipse
+                    key={i}
+                    cx="325"
+                    cy="245"
+                    rx={12 + i * 10}
+                    ry="126"
+                  />
+                ))}
+                {Array.from({ length: 9 }, (_, i) => (
+                  <path key={i} d={`M195 ${149 + i * 24}H455`} />
+                ))}
+              </g>
+              <circle cx="175" cy="205" r="4" fill="#365cf5" />
+              <path
+                d="M175 205H325V245"
+                fill="none"
+                stroke="#131820"
+                strokeWidth="1"
+              />
+              <circle cx="325" cy="245" r="4" fill="#f4f2ec" />
+              <path d="M37 70h14m-7-7v14M450 375h14m-7-7v14" stroke="#365cf5" />
+            </svg>
+            <div className="figure-bottom">
+              <span>From possibility</span>
+              <span>to working systems ↗</span>
             </div>
-            <ul className="mt-12">
-              {papers.map((paper) => {
-                const date = new Date(paper.publishedAt).toLocaleDateString("en-US", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })
-                return (
-                  <li
-                    key={paper._id}
-                    className="border-t py-8 first:border-t-0 first:pt-0"
-                    style={{ borderColor: "hsl(var(--rule))" }}
-                  >
-                    <Link
-                      href={`/research/${paper.slug.current}`}
-                      className="group block"
-                    >
-                      <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
-                        <p className="font-mono text-[11px] uppercase tracking-wider text-muted-foreground">
-                          {paper.category}
-                        </p>
-                        <time className="font-mono text-[11px] uppercase tracking-wider text-muted-foreground/70">
-                          {date}
-                        </time>
-                      </div>
-                      <h3 className="mt-3 text-lg font-semibold leading-snug tracking-tight transition-colors group-hover:text-muted-foreground md:text-xl">
-                        {paper.title}
-                      </h3>
-                      <p className="mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground md:text-[15px]">
-                        {paper.abstract}
-                      </p>
-                    </Link>
-                  </li>
-                )
-              })}
-            </ul>
           </div>
         </div>
-      </div>
-    </section>
-  )
-}
-
-function WritingBlock({ no, posts }: { no: string; posts: Post[] }) {
-  return (
-    <section className="border-b" style={{ borderColor: "hsl(var(--rule))" }}>
-      <div className="container py-20 md:py-24">
-        <div className="grid gap-10 md:grid-cols-12">
-          <div className="md:col-span-2">
-            <SectionHeader no={no} label="Writing" />
+        <div className="container">
+          <div className="hero-index">
+            <span className="eyebrow">Our field of work</span>
+            <div>
+              <span>AI infrastructure</span>
+              <span>Experimental research</span>
+              <span>
+                Future models <ArrowUpRight size={13} />
+              </span>
+            </div>
           </div>
-          <div className="md:col-span-10 lg:col-span-9">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-              <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-                Recent notes
-              </h2>
+        </div>
+      </section>
+      <section id="work" className="inquiry-section">
+        <div className="container inquiry-layout">
+          <div>
+            <p className="eyebrow">01 / What we’re exploring</p>
+            <h2>
+              What if intelligence
+              <br />
+              could work
+              <br />
+              <span>with less?</span>
+            </h2>
+            <p className="inquiry-intro">
+              Less memory. Less unnecessary computation. More room to explore
+              what’s possible.
+            </p>
+            <Link href="/research" className="text-link">
+              Explore our research <ArrowUpRight size={17} aria-hidden="true" />
+            </Link>
+          </div>
+          <div className="inquiry-list">
+            {[
+              [
+                "01",
+                "Rethink the representation.",
+                "How can we represent what a model knows in a more useful form? We investigate the structure inside model weights and explore alternative representations.",
+                "Representations / Model structure",
+              ],
+              [
+                "02",
+                "Reconsider the computation.",
+                "What needs to happen for a model to produce an answer? We build and measure alternative execution paths, with memory and hardware in view.",
+                "Inference / Systems",
+              ],
+              [
+                "03",
+                "Build toward what’s next.",
+                "Infrastructure is our starting point. What we learn will inform our future work on model architectures and learning methods.",
+                "Models / Future direction",
+              ],
+            ].map(([no, title, body, tags]) => (
+              <article key={no}>
+                <span className="inquiry-no">{no}</span>
+                <div>
+                  <h3>{title}</h3>
+                  <p>{body}</p>
+                  <span className="eyebrow">{tags}</span>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+      <section className="method-section container">
+        <p className="eyebrow">02 / How we work</p>
+        <div className="method-statement">
+          <h2>
+            Curiosity starts it.
+            <br />
+            <span>Evidence moves it forward.</span>
+          </h2>
+          <div>
+            <p>
+              We follow an idea into code, put it against a baseline, and look
+              closely at what happens. The useful findings become tools. The
+              open questions become the next experiment.
+            </p>
+            <Link href="/about" className="text-link">
+              More about our approach{" "}
+              <ArrowUpRight size={17} aria-hidden="true" />
+            </Link>
+          </div>
+        </div>
+        <div className="method-steps">
+          {["Question", "Build", "Measure", "Learn"].map((s, i) => (
+            <div key={s}>
+              <span>0{i + 1}</span>
+              {s}
+              <ArrowRight size={17} aria-hidden="true" />
+            </div>
+          ))}
+        </div>
+      </section>
+      {articles.length > 0 && (
+        <section className="notes-section container">
+          <div className="notes-heading">
+            <div>
+              <p className="eyebrow">From the lab</p>
+              <h2>Work, in words.</h2>
+            </div>
+            <Link href="/blog" className="text-link">
+              All writing <ArrowUpRight size={17} />
+            </Link>
+          </div>
+          <div className="notes-grid">
+            {articles.map((a) => (
               <Link
-                href="/blog"
-                className="text-sm text-muted-foreground hover:text-foreground"
+                key={`${a.kind}-${a._id}`}
+                href={a.href}
+                className="note-card"
               >
-                All writing →
+                <div className="eyebrow">
+                  {a.kind}
+                  <ArrowUpRight size={16} />
+                </div>
+                <h3>{a.title}</h3>
+                <p>{a.abstract ?? a.excerpt}</p>
+                <time dateTime={a.publishedAt}>
+                  {new Date(a.publishedAt).toLocaleDateString("en-GB", {
+                    month: "short",
+                    year: "numeric",
+                    timeZone: "UTC",
+                  })}
+                </time>
               </Link>
-            </div>
-            <ul className="mt-12">
-              {posts.map((post) => {
-                const date = new Date(post.publishedAt).toLocaleDateString("en-US", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })
-                return (
-                  <li
-                    key={post._id}
-                    className="border-t py-8 first:border-t-0 first:pt-0"
-                    style={{ borderColor: "hsl(var(--rule))" }}
-                  >
-                    <Link
-                      href={`/blog/${post.slug.current}`}
-                      className="group block"
-                    >
-                      <div className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
-                        <time className="font-mono text-[11px] uppercase tracking-wider text-muted-foreground">
-                          {date}
-                        </time>
-                        {post.author ? (
-                          <span className="font-mono text-[11px] uppercase tracking-wider text-muted-foreground/70">
-                            {post.author}
-                          </span>
-                        ) : null}
-                      </div>
-                      <h3 className="mt-3 text-lg font-semibold leading-snug tracking-tight transition-colors group-hover:text-muted-foreground md:text-xl">
-                        {post.title}
-                      </h3>
-                      <p className="mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground md:text-[15px]">
-                        {post.excerpt}
-                      </p>
-                    </Link>
-                  </li>
-                )
-              })}
-            </ul>
+            ))}
           </div>
-        </div>
+        </section>
+      )}
+      <div className="home-newsletter">
+        <NewsletterSignup sectionLabel="Stay curious" />
       </div>
-    </section>
-  )
+    </div>
+  );
 }
-
-function SoftwareBlock({ no, products }: { no: string; products: Product[] }) {
-  return (
-    <section className="border-b" style={{ borderColor: "hsl(var(--rule))" }}>
-      <div className="container py-20 md:py-24">
-        <div className="grid gap-10 md:grid-cols-12">
-          <div className="md:col-span-2">
-            <SectionHeader no={no} label="Software" />
-          </div>
-          <div className="md:col-span-10 lg:col-span-9">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-              <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-                What we ship
-              </h2>
-              <p className="font-mono text-xs uppercase tracking-wider text-muted-foreground">
-                {products.length} {products.length === 1 ? "product" : "products"}
-              </p>
-            </div>
-            <ul className="mt-12">
-              {products.map((p) => (
-                <ProductRow key={p._id} product={p} />
-              ))}
-            </ul>
-          </div>
-        </div>
-      </div>
-    </section>
-  )
-}
-
-function ProductRow({ product }: { product: Product }) {
-  const status = product.status ?? "internal"
-  const statusLabel = STATUS_LABEL[status] ?? "Internal"
-  const ctaLabel = product.cta?.label ?? "Ask about access"
-  const ctaHref = product.cta?.href ?? "/contact"
-  const summary = product.summary ?? product.description
-
-  return (
-    <li
-      className="grid grid-cols-12 gap-6 border-t py-8 first:border-t-0 first:pt-0"
-      style={{ borderColor: "hsl(var(--rule))" }}
-    >
-      <div className="col-span-12 sm:col-span-3">
-        <p className="font-mono text-[11px] uppercase tracking-wider text-muted-foreground">
-          {statusLabel}
-        </p>
-      </div>
-      <div className="col-span-12 sm:col-span-9">
-        <h3 className="text-xl font-semibold tracking-tight md:text-2xl">
-          {product.title}
-        </h3>
-        {summary ? (
-          <p className="mt-3 max-w-2xl text-base leading-relaxed text-muted-foreground md:text-[17px]">
-            {summary}
-          </p>
-        ) : null}
-        <div className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm">
-          <CtaLink href={ctaHref} label={ctaLabel} />
-        </div>
-      </div>
-    </li>
-  )
-}
-
-function CtaLink({ href, label }: { href: string; label: string }) {
-  const isExternal = /^https?:/i.test(href)
-  if (isExternal) {
-    return (
-      <a
-        href={href}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="group inline-flex items-center gap-1.5 font-medium text-foreground"
-      >
-        <span className="border-b border-foreground/40 pb-0.5 transition-colors group-hover:border-foreground">
-          {label}
-        </span>
-        <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
-      </a>
-    )
-  }
-  return (
-    <Link
-      href={href}
-      className="group inline-flex items-center gap-1.5 font-medium text-foreground"
-    >
-      <span className="border-b border-foreground/40 pb-0.5 transition-colors group-hover:border-foreground">
-        {label}
-      </span>
-      <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
-    </Link>
-  )
-}
-

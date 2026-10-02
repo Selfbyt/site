@@ -63,11 +63,11 @@ export function NewsletterSignup({
           </div>
           <div className="md:col-span-10 lg:col-span-9">
             <h2 className="max-w-xl text-2xl font-semibold tracking-tight sm:text-3xl">
-              Occasional notes when we publish.
+              Follow the work as it takes shape.
             </h2>
             <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground md:text-[15px]">
-              No drip campaigns, no roundups, no marketing. Just an email when
-              there's something new on the site.
+              New experiments, useful findings, and things we’ve built.
+              An occasional note from Selfbyt.
             </p>
             <form
               onSubmit={handleSubmit}
@@ -75,6 +75,7 @@ export function NewsletterSignup({
             >
               <Input
                 type="email"
+                autoComplete="email"
                 placeholder="you@somewhere.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -85,7 +86,7 @@ export function NewsletterSignup({
               <Button
                 type="submit"
                 disabled={isLoading}
-                className="rounded-none bg-foreground text-background hover:bg-foreground/90"
+                className="rounded-none bg-primary text-primary-foreground hover:bg-primary/90"
               >
                 {isLoading ? "Subscribing…" : "Subscribe"}
               </Button>
