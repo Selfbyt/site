@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Link from "next/link";
+import Link from "@/components/link";
 import { ArrowUpRight, ChevronDown } from "lucide-react";
 import { MainNav, NAV_ITEMS } from "@/components/main-nav";
 

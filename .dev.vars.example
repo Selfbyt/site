@@ -1,0 +1,8 @@
+# Copy to .dev.vars for local Wrangler only. Never commit real values.
+GMAIL_USER=""
+GMAIL_APP_PASSWORD=""
+MAILCHIMP_API_KEY=""
+MAILCHIMP_SERVER_PREFIX=""
+MAILCHIMP_LIST_ID=""
+SANITY_WEBHOOK_SECRET=""
+CLOUDFLARE_DEPLOY_HOOK=""

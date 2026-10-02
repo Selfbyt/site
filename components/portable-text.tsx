@@ -2,8 +2,7 @@
 
 import { PortableText as PortableTextComponent } from "@portabletext/react"
 import type { PortableTextBlock } from "@portabletext/types"
-import Image from "next/image"
-import Link from "next/link"
+import Link from "@/components/link"
 
 import { urlFor } from "@/lib/sanity"
 
@@ -12,7 +11,7 @@ const components = {
     image: ({ value }: any) => (
       <figure className="my-10">
         <div className="relative w-full overflow-hidden border" style={{ borderColor: "hsl(var(--rule))" }}>
-          <Image
+          <img loading="lazy"
             src={urlFor(value).width(1400).url() || "/placeholder.svg"}
             alt={value.alt || ""}
             width={1400}

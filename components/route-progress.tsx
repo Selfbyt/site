@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import { usePathname, useSearchParams } from "next/navigation"
+import { usePathname, useSearchParams } from "@/src/navigation"
 
 export function RouteProgress() {
   const pathname = usePathname()

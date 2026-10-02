@@ -1,90 +1,30 @@
-# Selfbyt Website with Sanity CMS Integration
+# Selfbyt
 
-This project is a Next.js website for Selfbyt, integrated with Sanity CMS for content management.
+React + Vite website, with Sanity Studio and prerendered public pages.
 
-## Getting Started
+## Run locally
 
-### Setting Up Sanity
+Use Node 22.12+ and `npm ci --legacy-peer-deps` (the existing Sanity/UI dependency tree has peer-version conflicts).
 
-1. Install the Sanity CLI:
-   \`\`\`bash
-   npm install -g @sanity/cli
-   \`\`\`
+- `npm run dev`: Vite on port 3001, local form API on port 3002.
+- `npm run build`: fetch published Sanity content and produce static HTML in `dist/`.
+- `npm run preview`: serve the production build and local form API on port 3001.
+- `npm run check`: TypeScript checks.
+- `npm test`: API validation and prerender checks; build first.
+- `npm run assets`: regenerate social image and Apple icon.
 
-2. Create a new Sanity project:
-   \`\`\`bash
-   sanity init
-   \`\`\`
+Set `VITE_SANITY_PROJECT_ID`, `VITE_SANITY_DATASET`, and optionally `VITE_SANITY_API_VERSION` in `.env.local`. Existing `NEXT_PUBLIC_SANITY_*` names remain supported during transition. These three values are public. Never prefix server secrets with `VITE_`.
 
-3. Follow the prompts to set up your project. When asked about the schema, choose "Create a new schema".
+Contact uses server-only `GMAIL_USER` and `GMAIL_APP_PASSWORD`. Newsletter uses `MAILCHIMP_API_KEY`, `MAILCHIMP_SERVER_PREFIX`, and `MAILCHIMP_LIST_ID`. These are read by the local Node API, never embedded in the frontend.
 
-4. Copy the schema definitions from `sanity-schema.ts` into your Sanity Studio project's schema files.
+## Content and routing
 
-5. Deploy your Sanity Studio:
-   \`\`\`bash
-   sanity deploy
-   \`\`\`
+Public routes and published article slugs are generated as HTML with canonical URLs, Open Graph/Twitter metadata, sitemap, and robots rules. Publishing content requires rebuilding; ISR has been removed. Restart local development to refresh its CMS snapshot. Builds fail if Sanity cannot be fetched.
 
-### Environment Variables
+Sanity Studio has its own entry at `/studio/`. A future static host must resolve extensionless public URLs to their `index.html`, serve `404.html` with status 404, and rewrite `/studio/*` to `/studio/index.html`. Do not apply a global SPA rewrite, which would hide real 404s and article metadata.
 
-Create a `.env.local` file in the root of your Next.js project with the following variables:
+## Cloudflare setup
 
-\`\`\`
-NEXT_PUBLIC_SANITY_PROJECT_ID=your_project_id
-NEXT_PUBLIC_SANITY_DATASET=production
-NEXT_PUBLIC_SANITY_API_VERSION=2023-05-03
-SANITY_WEBHOOK_SECRET=your_webhook_secret
-\`\`\`
+The Worker implementation and static-host configuration are in `worker/` and `wrangler.jsonc`. See [CLOUDFLARE.md](CLOUDFLARE.md) for local testing, secrets, deployment and Sanity rebuild hooks. Deployed at https://selfbyt-site.fmbishu.workers.dev with Gmail and Mailchimp secrets. DNS is unchanged; automatic Sanity rebuilds still need configuration.
 
-Replace `your_project_id` with your Sanity project ID and `your_webhook_secret` with a secure random string.
-
-### Setting Up Webhooks
-
-1. In your Sanity project dashboard, go to API > Webhooks.
-2. Create a new webhook with the following settings:
-   - Name: Next.js Revalidation
-   - URL: `https://your-website.com/api/revalidate`
-   - HTTP method: POST
-   - Secret: The same value as `SANITY_WEBHOOK_SECRET`
-   - Dataset: production
-   - Filter: Leave empty to trigger on all document changes
-
-### Running the Website
-
-1. Install dependencies:
-   \`\`\`bash
-   npm install
-   \`\`\`
-
-2. Run the development server:
-   \`\`\`bash
-   npm run dev
-   \`\`\`
-
-3. Open [http://localhost:3000](http://localhost:3000) in your browser.
-
-## Content Management
-
-### Creating Content
-
-1. Access your Sanity Studio at `https://your-project-name.sanity.studio/`
-2. Create authors and categories first, as they are referenced by other content types
-3. Create blog posts, research papers, case studies, and products
-
-### Featured Content
-
-To feature content on the homepage:
-1. Edit the content item in Sanity Studio
-2. Toggle the "Featured" field to true
-3. Save the document
-
-## Deployment
-
-Deploy your Next.js website to Vercel:
-
-1. Push your code to a Git repository
-2. Import the repository in Vercel
-3. Add the environment variables
-4. Deploy
-
-After deployment, update your webhook URL in Sanity to point to your production domain.
+The Node server remains a local development/preview backend. Its legacy revalidation route remains disabled; the Cloudflare Worker provides the production rebuild integration.
