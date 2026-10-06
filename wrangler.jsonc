@@ -4,6 +4,11 @@
   "main": "worker/index.mjs",
   "compatibility_date": "2026-05-01",
   "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": true,
+  "routes": [
+    {"pattern": "selfbyt.com", "custom_domain": true},
+    {"pattern": "www.selfbyt.com", "custom_domain": true}
+  ],
   "assets": {
     "directory": "./dist",
     "binding": "ASSETS",

@@ -1,8 +1,10 @@
 # Cloudflare Worker setup
 
-One Worker serves the Vite static build and three API routes. Deployed to https://selfbyt-site.fmbishu.workers.dev. All nine original Netlify variables are stored as Worker secrets: five Gmail/Mailchimp variables and four Sanity variables. The Sanity values are also needed separately in the build environment; runtime secrets do not automatically become Workers Builds variables. SANITY_API_TOKEN is stored server-side but is not required or used by the current published-content build. Public routes, OG assets, 404 behavior and invalid-input API responses were verified. No custom-domain/DNS changes have been performed. Automatic Sanity rebuilds remain disabled until their two secrets are configured; actual email delivery and signup success have not been exercised.
+One Worker serves the Vite static build and three API routes. Deployed to https://selfbyt-site.fmbishu.workers.dev. All nine original Netlify variables are stored as Worker secrets: five Gmail/Mailchimp variables and four Sanity variables. The Sanity values are also needed separately in the build environment; runtime secrets do not automatically become Workers Builds variables. SANITY_API_TOKEN is stored server-side but is not required or used by the current published-content build. Public routes, OG assets, 404 behavior and invalid-input API responses were verified. Automatic Sanity rebuilds remain disabled until their two secrets are configured; actual email delivery and signup success have not been exercised.
 
 ## Routes
+
+The custom domains `selfbyt.com` and `www.selfbyt.com` are connected to this Worker and declared in `wrangler.jsonc` for future deployments. Namecheap remains the registrar; Cloudflare manages DNS using `aria.ns.cloudflare.com` and `koa.ns.cloudflare.com`. Existing application and Clerk subdomains were preserved. Cloudflare Email Routing forwards `hello@selfbyt.com` to the verified `selfbytdevelopmentlabs@gmail.com` address. The old Namecheap MX/SPF records were replaced with Cloudflare mail records. Live email delivery still needs verification.
 
 - `POST /api/contact`: Gmail SMTP over TLS, fixed recipient `hello@selfbyt.com`, validated plain-text message and sender reply-to.
 - `POST /api/newsletter`: Mailchimp list subscription, preserving the existing signup behavior.
