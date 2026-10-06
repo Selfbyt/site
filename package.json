@@ -12,6 +12,7 @@
     "check": "tsc --noEmit",
     "test": "node --test tests/*.test.mjs",
     "assets": "node scripts/generate-brand-assets.mjs",
+    "assets:social": "node scripts/generate-social-assets.mjs",
     "seed:products": "node scripts/seed-products.mjs",
     "reset:sanity": "node scripts/reset-sanity.mjs",
     "start": "node scripts/serve.mjs",
