@@ -1,6 +1,7 @@
 import Link from "@/components/link"
 
 import { Logo } from "@/components/logo"
+import { DISCORD_INVITE_URL } from "@/lib/community"
 
 export function SiteFooter() {
   const year = new Date().getFullYear()
@@ -61,6 +62,11 @@ export function SiteFooter() {
                 <Link href="/contact" className="text-foreground/80 hover:text-foreground">
                   Send a message
                 </Link>
+              </li>
+              <li>
+                <a href={DISCORD_INVITE_URL} target="_blank" rel="noopener noreferrer" className="text-foreground/80 hover:text-foreground">
+                  Join us on Discord
+                </a>
               </li>
             </ul>
           </div>

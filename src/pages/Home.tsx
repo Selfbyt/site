@@ -3,6 +3,7 @@ import { pageMetadata } from "@/lib/metadata";
 import Link from "@/components/link";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { NewsletterSignup } from "@/components/newsletter-signup";
+import { DISCORD_INVITE_URL } from "@/lib/community";
 
 export const metadata = pageMetadata({ path: "/" });
 
@@ -278,6 +279,21 @@ export default function Home() {
         </section>
       )}
       <div className="home-newsletter">
+        <section className="container py-16">
+          <p className="eyebrow">Community</p>
+          <div className="method-statement">
+            <h2>Build with us.</h2>
+            <div>
+              <p>
+                Join developers exploring how to run AI with less compute.
+                Share your setup, discuss benchmarks, and help shape what we build.
+              </p>
+              <a href={DISCORD_INVITE_URL} target="_blank" rel="noopener noreferrer" className="brand-button">
+                Join us on Discord <ArrowUpRight size={17} aria-hidden="true" />
+              </a>
+            </div>
+          </div>
+        </section>
         <NewsletterSignup sectionLabel="Stay curious" />
       </div>
     </div>
