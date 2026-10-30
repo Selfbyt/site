@@ -2,6 +2,8 @@
 
 Selfbyt builds AI infrastructure and experiments with how models are represented and executed. Model development is a future direction. The brand should communicate curiosity, precision, and ambition through concrete work and clear language.
 
+Our aim is to make AI easier and less costly to deploy. The current technical focus is reducing the resources needed to run models. Describe measured improvements with their workload, hardware, and quality constraints.
+
 ## Current identity
 
 - Logo: an open circle on the left and a filled circle on the right, with equal outer diameters.
@@ -13,6 +15,10 @@ Selfbyt builds AI infrastructure and experiments with how models are represented
 - Description: “AI infrastructure and experimental research.”
 
 Use generous space, simple typography, fine rules, and geometric diagrams. Avoid em dashes in titles and subtitles. Do not use “Independent thinking. Intelligent systems.” or position cortexSDR as the final product. The company’s direction is broader than sparse models.
+
+## Company direction
+
+The [three-year plan](three-year-plan.md) proposes a path from developers and startups to private enterprise deployments, followed by one focused infrastructure or research partnership. Its milestones are planning targets and should be reviewed quarterly.
 
 ## Social assets
 
