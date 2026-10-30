@@ -2,9 +2,9 @@ import { pageMetadata } from "@/lib/metadata";
 import Link from "@/components/link";
 
 export const metadata = pageMetadata({
-  title: "Team",
+  title: "Team & Careers - Join Selfbyt",
   description:
-    "Selfbyt is a small, distributed group. We're open to collaboration, hiring, and the occasional visiting researcher.",
+    "Join Selfbyt's distributed research team. We're looking for researchers and engineers working on inference optimization, model compression, ML systems, and honest evaluation methods. Small team, focused work.",
   path: "/team",
 });
 

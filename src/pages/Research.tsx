@@ -5,9 +5,9 @@ import { ArrowRight } from "lucide-react";
 
 
 export const metadata = pageMetadata({
-  title: "Research",
+  title: "Research - AI Infrastructure & Model Efficiency",
   description:
-    "Selfbyt research papers, technical reports, and reproducible experiments.",
+    "Explore Selfbyt's research papers, technical reports, and reproducible experiments on AI model compression, sparse representations, inference optimization, and efficient execution methods. Peer-reviewed findings and open experimental results.",
   path: "/research",
 });
 

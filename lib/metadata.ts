@@ -1,8 +1,8 @@
 
 
-export const siteTitle = "Selfbyt | Foundations for intelligent systems";
+export const siteTitle = "Selfbyt | Building Foundations for Efficient Intelligence";
 export const siteDescription =
-  "We build AI infrastructure and explore new ways to represent and run models. From the systems underneath to the intelligence ahead.";
+  "Selfbyt builds AI infrastructure and explores new ways to represent and run intelligent systems. Experimenting with model compression, inference optimization, and efficient execution to understand how AI can work with fewer resources.";
 
 export function pageMetadata({
   title,

@@ -1,8 +1,8 @@
 import { pageMetadata } from "@/lib/metadata";
 
 export const metadata = pageMetadata({
-  title: "Terms",
-  description: "Terms of use for the Selfbyt website and services.",
+  title: "Terms of Use - Selfbyt",
+  description: "Terms of use for Selfbyt website and services, including research, writing, and software access. Last updated May 10, 2026.",
   path: "/terms",
 });
 

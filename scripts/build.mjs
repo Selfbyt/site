@@ -15,11 +15,46 @@ for(const route of [...routes,"/404"]){
  const data={posts:content.posts.map(p=>({...p,body:route==="/blog/"+encodeURIComponent(p.slug.current)?p.body:[]})),papers:content.papers.map(p=>({...p,body:route==="/research/"+encodeURIComponent(p.slug.current)?p.body:[]}))};
  const {html,metadata:m,status}=render(route,data);
  const meta=(name,value,property=false)=>`<meta ${property?"property":"name"}="${name}" content="${escape(value)}"/>`;
- const head=`<title>${escape(m.title.absolute)}</title><link rel="canonical" href="${origin}${route==="/"?"/":escape(route)}"/><link rel="icon" href="/icon.svg" type="image/svg+xml"/><link rel="apple-touch-icon" href="/apple-touch-icon.png"/>`+meta("description",m.description)+meta("theme-color","#f4f2ec")+meta("og:title",m.openGraph.title,true)+meta("og:description",m.description,true)+meta("og:url",origin+route,true)+meta("og:type",m.openGraph.type,true)+meta("og:site_name","Selfbyt",true)+meta("og:image",origin+"/og/selfbyt.png",true)+meta("og:image:width","1200",true)+meta("og:image:height","630",true)+meta("og:image:alt",m.openGraph.images[0].alt,true)+meta("twitter:card","summary_large_image")+meta("twitter:title",m.twitter.title)+meta("twitter:description",m.description)+meta("twitter:image",origin+"/og/selfbyt.png")+(m.openGraph.publishedTime?meta("article:published_time",m.openGraph.publishedTime,true):"")+(status===404?meta("robots","noindex"):"");
+ 
+ // Generate structured data for organization and articles
+ const structuredData = route === "/" ? {
+   "@context": "https://schema.org",
+   "@type": "Organization",
+   "name": "Selfbyt",
+   "url": origin,
+   "logo": `${origin}/og/selfbyt.png`,
+   "description": m.description,
+   "foundingDate": "2025",
+   "sameAs": []
+ } : m.openGraph.type === "article" ? {
+   "@context": "https://schema.org",
+   "@type": route.startsWith("/research") ? "ScholarlyArticle" : "Article",
+   "headline": m.title.absolute.replace(" | Selfbyt", ""),
+   "description": m.description,
+   "url": `${origin}${route}`,
+   "datePublished": m.openGraph.publishedTime,
+   "publisher": {
+     "@type": "Organization",
+     "name": "Selfbyt",
+     "logo": {
+       "@type": "ImageObject",
+       "url": `${origin}/og/selfbyt.png`
+     }
+   },
+   "image": `${origin}/og/selfbyt.png`
+ } : null;
+ 
+ const structuredDataTag = structuredData ? `<script type="application/ld+json">${JSON.stringify(structuredData)}</script>` : "";
+ 
+ const head=`<title>${escape(m.title.absolute)}</title><meta name="viewport" content="width=device-width, initial-scale=1.0"/><link rel="canonical" href="${origin}${route==="/"?"/":escape(route)}"/><link rel="icon" href="/icon.svg" type="image/svg+xml"/><link rel="apple-touch-icon" href="/apple-touch-icon.png"/>`+meta("description",m.description)+meta("theme-color","#f4f2ec")+meta("keywords","AI infrastructure, model compression, sparse models, inference optimization, efficient AI, machine learning systems, AI research")+meta("author","Selfbyt")+meta("og:title",m.openGraph.title,true)+meta("og:description",m.description,true)+meta("og:url",origin+route,true)+meta("og:type",m.openGraph.type,true)+meta("og:site_name","Selfbyt",true)+meta("og:image",origin+"/og/selfbyt.png",true)+meta("og:image:width","1200",true)+meta("og:image:height","630",true)+meta("og:image:alt",m.openGraph.images[0].alt,true)+meta("twitter:card","summary_large_image")+meta("twitter:title",m.twitter.title)+meta("twitter:description",m.description)+meta("twitter:image",origin+"/og/selfbyt.png")+(m.openGraph.publishedTime?meta("article:published_time",m.openGraph.publishedTime,true):"")+(status===404?meta("robots","noindex"):"")+ structuredDataTag;
  const output=template.replace("<!--head-->",head).replace("<!--app-->",html).replace("<!--data-->",`<script id="site-data" type="application/json">${JSON.stringify(data).replace(/</g,"\u003c")}</script>`);
  const file=route==="/404"?"dist/404.html":route==="/"?"dist/index.html":`dist${route}/index.html`;
  await mkdir(dirname(file),{recursive:true});await writeFile(file,output);
 }
-await writeFile("dist/sitemap.xml",`<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${routes.map(r=>`<url><loc>${origin}${escape(r)}</loc></url>`).join("")}</urlset>`);
+await writeFile("dist/sitemap.xml",`<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${routes.map(r=>{
+  const priority = r === "/" ? "1.0" : r.startsWith("/research") || r.startsWith("/blog") ? "0.8" : "0.7";
+  const lastmod = new Date().toISOString().split('T')[0];
+  return `<url><loc>${origin}${escape(r)}</loc><lastmod>${lastmod}</lastmod><priority>${priority}</priority></url>`;
+}).join("")}</urlset>`);
 await writeFile("dist/robots.txt",`User-agent: *\nAllow: /\nDisallow: /studio\nDisallow: /api/\nSitemap: ${origin}/sitemap.xml\n`);
 console.log(`Prerendered ${routes.length} pages, plus a 404 page.`);

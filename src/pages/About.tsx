@@ -2,9 +2,9 @@ import { pageMetadata } from "@/lib/metadata";
 import Link from "@/components/link";
 
 export const metadata = pageMetadata({
-  title: "About",
+  title: "About Selfbyt",
   description:
-    "Selfbyt builds AI infrastructure and explores new ways to represent and run intelligent systems.",
+    "Learn about Selfbyt's mission to build efficient AI infrastructure. We experiment with model compression, alternative representations, and execution methods to understand how intelligent systems can work with fewer resources. Research-driven, measurement-focused approach.",
   path: "/about",
 });
 

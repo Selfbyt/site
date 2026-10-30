@@ -5,9 +5,9 @@ import { ArrowRight } from "lucide-react";
 
 
 export const metadata = pageMetadata({
-  title: "Writing",
+  title: "Writing - Technical Notes & Method Documentation",
   description:
-    "Method notes, post-mortems, and short pieces from the Selfbyt lab.",
+    "Technical writing from the Selfbyt lab: method notes, experiment post-mortems, and detailed documentation about AI infrastructure development, model compression techniques, and reproducible research findings.",
   path: "/blog",
 });
 

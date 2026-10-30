@@ -1,8 +1,8 @@
 import { pageMetadata } from "@/lib/metadata";
 
 export const metadata = pageMetadata({
-  title: "Privacy",
-  description: "How Selfbyt handles personal information.",
+  title: "Privacy Policy - Selfbyt",
+  description: "Selfbyt's privacy policy: how we collect, use, and protect your personal information. No tracking, no analytics. Updated May 10, 2026.",
   path: "/privacy",
 });
 
